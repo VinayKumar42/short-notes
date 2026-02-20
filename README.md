@@ -12,7 +12,7 @@
 
 ## 🌟 Demo
 
-**Live Demo:** [https://your-demo-link.vercel.app](https://your-demo-link.vercel.app)
+**Live Demo:** [https://mythoughts-gray.vercel.app](https://mythoughts-gray.vercel.app)
 
 ## 📸 Screenshots
 
@@ -254,9 +254,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors & Contributors
 
-- **Your Name** - *Initial work* - [@yourusername](https://github.com/yourusername)
+- **Your Name** - *Initial work* - [@VinayKumar42](https://github.com/VinayKumar42)
 
-See the list of [contributors](https://github.com/yourusername/short-notes/contributors) who participated in this project.
+See the list of [contributors](https://github.com/VinayKumar42/short-notes/contributors) who participated in this project.
 
 ## 🙏 Acknowledgments
 
@@ -267,9 +267,8 @@ See the list of [contributors](https://github.com/yourusername/short-notes/contr
 
 ## 📞 Support
 
-- 📧 Email: your.email@example.com
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/short-notes/discussions)
-- 🐦 Twitter: [@yourhandle](https://twitter.com/yourhandle)
+- 📧 Email: vinayboss9669@gmail.com
+- 💬 Discussions: [GitHub Discussions](https://github.com/VinayKumar42/short-notes/discussions)
 
 ## 🗺️ Roadmap
 
@@ -293,7 +292,7 @@ See the list of [contributors](https://github.com/yourusername/short-notes/contr
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://github.com/yourusername">Your Name</a>
+  Made with ❤️ by <a href="https://github.com/VinayKumar42">Vinay Kumar</a>
 </p>
 
 <p align="center">
