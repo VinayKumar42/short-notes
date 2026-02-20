@@ -1,0 +1,61 @@
+name: Greet New Contributors
+
+on:
+  issues:
+    types: write
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet First Time Contributors
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            👋 **Welcome to Short Notes!**
+            
+            Thank you for opening your first issue! We're excited to have you as part of our community. 🎉
+            
+            **A maintainer will review your issue soon.** In the meantime:
+            
+            📖 **Please read our [Contributing Guidelines](../CONTRIBUTING.md)** to learn how to contribute
+            🤝 **Review our [Code of Conduct](../CODE_OF_CONDUCT.md)** to understand our community standards
+            💡 **Check out existing issues** to see if someone else has reported similar problems
+            
+            **For faster resolution:**
+            - Ensure you've provided all requested information
+            - Add screenshots if it's a UI issue
+            - Include console errors if applicable
+            
+            We appreciate your contribution to making Short Notes better! 🚀
+            
+          pr-message: |
+            🎉 **Congratulations on your first Pull Request to Short Notes!**
+            
+            Thank you for taking the time to contribute! Your effort is truly appreciated. ❤️
+            
+            **Before we review your PR, please ensure:**
+            
+            ✅ You've read our [Contributing Guidelines](../CONTRIBUTING.md)
+            ✅ Your PR description clearly explains the changes
+            ✅ All tests pass and there are no console errors
+            ✅ Your code follows React best practices
+            ✅ You've tested on multiple screen sizes (mobile, tablet, desktop)
+            ✅ Your branch is up-to-date with `dev`
+            ✅ Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
+            
+            **What happens next?**
+            - A maintainer will review your code within 2-3 business days
+            - You may be asked to make some changes
+            - Once approved, your PR will be merged! 🎊
+            
+            **Need help?** Feel free to ask questions in the PR comments or join our community discussions!
+            
+            Thank you for making Short Notes better! 🚀
