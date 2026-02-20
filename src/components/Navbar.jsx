@@ -1,5 +1,6 @@
 import { NavbarData } from "../data/Navbar";
 import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Navbar = ({ darkMode, toggleTheme }) => {
   return (
@@ -20,6 +21,30 @@ const Navbar = ({ darkMode, toggleTheme }) => {
           </NavLink>
         ))}
       </div>
+      {/*login and register */}
+     <div className="flex gap-x-5">
+  <NavLink
+    to="/login"
+    className={({ isActive }) =>
+      isActive
+        ? "text-blue-500 font-semibold text-xl"
+        : "text-white font-medium text-xl"
+    }
+  >
+    Sign In
+  </NavLink>
+
+  <NavLink
+    to="/register"
+    className={({ isActive }) =>
+      isActive
+        ? "text-blue-500 font-semibold text-xl"
+        : "text-white font-medium text-xl"
+    }
+  >
+    Sign Up
+  </NavLink>
+</div>
 
       {/* Right: Toggle Button */}
       <button

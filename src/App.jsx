@@ -4,6 +4,8 @@ import Home from "./components/Home"
 import Paste from "./components/Paste"
 import ViewPaste from "./components/ViewPaste"
 import Navbar from "./components/Navbar"
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 
 const router = createBrowserRouter(
@@ -48,7 +50,25 @@ const router = createBrowserRouter(
       <Navbar/>
       <ViewPaste/>
     </div>,
-    }
+    },
+
+     {
+    path: "/login",
+    element: (
+      <ThemeWrapper>
+        <Login />
+      </ThemeWrapper>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <ThemeWrapper>
+        <Register />
+      </ThemeWrapper>
+    ),
+  },
+
   ]
 )
 
