@@ -128,7 +128,7 @@ The following are NOT considered security vulnerabilities:
 
 ### Security Checklist for PRs
 
-Before submitting code:
+Before submitting code:-
 
 - [ ] No hardcoded secrets or credentials
 - [ ] User input is properly sanitized

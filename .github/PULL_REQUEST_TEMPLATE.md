@@ -108,7 +108,7 @@ Fixes #(issue number)
 ## 📝 Additional Notes
 <!-- Any additional information for reviewers -->
 
-## 🙏 Special Thanks
+## 🙏 Special Thanks:
 <!-- Optional: Credit anyone who helped you with this PR -->
 
 ---

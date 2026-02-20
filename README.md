@@ -1,4 +1,4 @@
-# 📝 Short Notes
+# 📝 Short Notes :
 
 > A modern, fast, and elegant note-taking and paste-sharing web application built with React, Redux Toolkit, and Vite.
 

@@ -106,7 +106,7 @@ npm run preview
 npm run lint
 ```
 
-Fix linting issues automatically:
+Fix linting issues automatically:-
 ```bash
 npm run lint:fix
 ```

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### ✨ Added
+### ✨ Added :
 - Initial project setup with React + Vite
 - Redux Toolkit for state management
 - Paste creation and viewing functionality

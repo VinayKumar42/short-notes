@@ -47,7 +47,7 @@ Explain why this improvement would help contributors or users:
 ## 📖 Additional Resources
 Link to any external resources that might help (React docs, tutorials, examples):
 
-## ✅ Checklist
+## ✅ Checklist :
 - [ ] I have checked if this documentation exists elsewhere
 - [ ] I have provided specific suggestions
 - [ ] I have explained the benefit of this improvement
