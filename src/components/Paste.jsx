@@ -20,7 +20,7 @@ const Paste = () => {
   );
 
   return (
-    <div className="w-full h-full py-10 max-w-[1200px] mx-auto px-5 lg:px-0">
+    <div className="w-full h-full py-10 max-w-300 mx-auto px-5 lg:px-0">
       <div className="flex flex-col gap-y-3">
         {/* Search */}
         {/* <div className="w-full flex gap-3 px-4 py-2  rounded-[0.3rem] border border-[rgba(128,121,121,0.3)]  mt-6">
@@ -35,14 +35,14 @@ const Paste = () => {
 
         {/* //////////// */}
         <div className="w-full flex gap-3 px-4 py-2 rounded-[0.3rem] border border-[rgba(128,121,121,0.3)] mt-6">
-  <input
-    type="search"
-    placeholder="Search paste here..."
-    className="focus:outline-none w-full bg-transparent transition-all duration-200 hover:bg-black hover:shadow-lg hover:border hover:border-gray-500 text-white px-3 py-2 rounded-[0.3rem]"
-    value={searchTerm} // Bind the input to searchTerm state
-    onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
-  />
-</div>
+          <input
+            type="search"
+            placeholder="Search paste here..."
+            className="focus:outline-none w-full bg-transparent transition-all duration-200 hover:bg-black hover:shadow-lg hover:border hover:border-gray-500 text-white px-3 py-2 rounded-[0.3rem]"
+            value={searchTerm} // Bind the input to searchTerm state
+            onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
+          />
+        </div>
 
         {/* All Pastes */}
         <div className="flex flex-col border border-[rgba(128,121,121,0.3)] py-4 rounded-[0.4rem]">
