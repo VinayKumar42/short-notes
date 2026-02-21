@@ -20,7 +20,7 @@ const router = createBrowserRouter(
       path: "/",
       element: (
         <ThemeWrapper>
-          <Home />
+          {(darkMode) => <Home darkMode={darkMode} />}
         </ThemeWrapper>
       ),
     },
@@ -28,10 +28,7 @@ const router = createBrowserRouter(
       path: "/pastes",
       element: (
         <ThemeWrapper>
-           {/* <div className="w-full h-full flex flex-col"> */}
-            
-            <Paste/>
-          {/* </div> */}
+          {(darkMode) => <Paste darkMode={darkMode} />}
         </ThemeWrapper>
       ),
     },
@@ -44,10 +41,11 @@ const router = createBrowserRouter(
     // },
     {
       path:"/pastes/:id",
-      element: <div className="w-full h-full flex flex-col">
-      <Navbar/>
-      <ViewPaste/>
-    </div>,
+      element: (
+        <ThemeWrapper>
+          {(darkMode) => <ViewPaste darkMode={darkMode} />}
+        </ThemeWrapper>
+      ),
     }
   ]
 )
@@ -61,9 +59,13 @@ function ThemeWrapper({ children }) {
   };
 
   return (
-    <div className={darkMode ? "dark bg-gray-900 text-white" : "bg-white text-black"}>
+    <div className={`min-h-screen transition-colors duration-300 ${
+      darkMode 
+        ? "dark bg-gray-900 text-gray-100" 
+        : "bg-gray-50 text-gray-900"
+    }`}>
       <Navbar darkMode={darkMode} toggleTheme={toggleTheme} />
-      {children}
+      {typeof children === 'function' ? children(darkMode) : children}
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { addToPastes, updatePastes } from "../redux/pasteSlice";
 import { useSearchParams } from "react-router-dom";
 import { Calendar, Copy, Eye, PencilLine,PlusCircle, Trash2 } from "lucide-react";
 
-const Home = () => {
+const Home = ({ darkMode = false }) => {
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
   const [searchParams, setSearchParams] = useSearchParams(); // Destructure useSearchParams
@@ -68,17 +68,29 @@ const Home = () => {
             // Dynamic width based on whether pasteId is present
             className={`${
               pasteId ? "w-[80%]" : "w-[85%]"
-            } text-black border border-input rounded-md p-2`}
+            } rounded-md p-3 transition-all duration-200 focus:ring-2 focus:ring-blue-500 outline-none ${
+              darkMode
+                ? "bg-gray-800 text-gray-100 border border-gray-700 placeholder-gray-500"
+                : "bg-white text-gray-900 border border-gray-300 placeholder-gray-400"
+            }`}
           />
           <button
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700"
+            className={`font-medium rounded-lg text-sm px-5 py-3 transition-all duration-200 hover:scale-105 whitespace-nowrap ${
+              darkMode
+                ? "text-white bg-blue-600 hover:bg-blue-700 border border-blue-500"
+                : "text-white bg-blue-700 hover:bg-blue-800 shadow-md"
+            }`}
             onClick={createPaste}
           >
             {pasteId ? "Update Paste" : "Create My Paste"}
           </button>
 
         {pasteId &&  <button
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700"
+            className={`font-medium rounded-lg text-sm px-4 py-3 transition-all duration-200 hover:scale-105 ${
+              darkMode
+                ? "text-white bg-blue-600 hover:bg-blue-700 border border-blue-500"
+                : "text-white bg-blue-700 hover:bg-blue-800 shadow-md"
+            }`}
             onClick={resetPaste}
           >
             <PlusCircle size={20} />
@@ -86,19 +98,25 @@ const Home = () => {
         </div>
 
         <div
-          className={`w-full flex flex-col items-start relative rounded bg-opacity-10 border border-[rgba(128,121,121,0.3)] backdrop-blur-2xl`}
+          className={`w-full flex flex-col items-start relative rounded transition-colors duration-200 ${
+            darkMode
+              ? "bg-gray-800 border border-gray-700"
+              : "bg-white border border-gray-300 shadow-sm"
+          }`}
         >
           <div
-            className={`w-full rounded-t flex items-center justify-between gap-x-4 px-4 py-2 border-b border-[rgba(128,121,121,0.3)]`}
+            className={`w-full rounded-t flex items-center justify-between gap-x-4 px-4 py-2 ${
+              darkMode ? "border-b border-gray-700" : "border-b border-gray-300"
+            }`}
           >
-            <div className="w-full flex gap-x-[6px] items-center select-none group">
-              <div className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-[1px] overflow-hidden bg-[rgb(255,95,87)]" />
+            <div className="w-full flex gap-x-1.5 items-center select-none group">
+              <div className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(255,95,87)]" />
 
               <div
-                className={`w-[13px] h-[13px] rounded-full flex items-center justify-center p-[1px] overflow-hidden bg-[rgb(254,188,46)]`}
+                className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(254,188,46)]"
               />
 
-              <div className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-[1px] overflow-hidden bg-[rgb(45,200,66)]" />
+              <div className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(45,200,66)]" />
             </div>
             {/* Circle and copy btn */}
             <div
@@ -106,7 +124,7 @@ const Home = () => {
             >
               {/*Copy  button */}
               <button
-                className={`flex justify-center items-center  transition-all duration-300 ease-in-out group`}
+                className={`flex justify-center items-center transition-all duration-300 ease-in-out group`}
                 onClick={() => {
                   navigator.clipboard.writeText(value);
                   toast.success("Copied to Clipboard", {
@@ -114,7 +132,14 @@ const Home = () => {
                   });
                 }}
               >
-                <Copy className="group-hover:text-sucess-500" size={20} />
+                <Copy 
+                  className={`transition-colors ${
+                    darkMode
+                      ? "text-gray-400 group-hover:text-green-400"
+                      : "text-gray-600 group-hover:text-green-600"
+                  }`} 
+                  size={20} 
+                />
               </button>
             </div>
           </div>
@@ -124,9 +149,13 @@ const Home = () => {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="Write Your Content Here...."
-            className="w-full p-3  focus-visible:ring-0 text-black "
+            className={`w-full p-4 focus:outline-none resize-none transition-colors duration-200 ${
+              darkMode
+                ? "bg-gray-800 text-gray-100 placeholder-gray-500"
+                : "bg-white text-gray-900 placeholder-gray-400"
+            }`}
             style={{
-              caretColor: "#000",
+              caretColor: darkMode ? "#fff" : "#000",
             }}
             rows={20}
           />
