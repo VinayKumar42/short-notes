@@ -6,6 +6,7 @@ import ViewPaste from "./components/ViewPaste"
 import Navbar from "./components/Navbar"
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ProtectedRoute from "./middleware/ProtectedRoute";
 
 
 const router = createBrowserRouter(
@@ -26,17 +27,16 @@ const router = createBrowserRouter(
         </ThemeWrapper>
       ),
     },
-    {
-      path: "/pastes",
-      element: (
-        <ThemeWrapper>
-           {/* <div className="w-full h-full flex flex-col"> */}
-            
-            <Paste/>
-          {/* </div> */}
-        </ThemeWrapper>
-      ),
-    },
+      {
+    path: "/pastes",
+    element: (
+      <ThemeWrapper>
+        <ProtectedRoute>
+          <Paste />
+        </ProtectedRoute>
+      </ThemeWrapper>
+    ),
+  },
     // {
     //   path:"/pastes",
     //   element: <div className="w-full h-full flex flex-col">
@@ -44,13 +44,16 @@ const router = createBrowserRouter(
     //   <Paste/>
     // </div>
     // },
-    {
-      path:"/pastes/:id",
-      element: <div className="w-full h-full flex flex-col">
-      <Navbar/>
-      <ViewPaste/>
-    </div>,
-    },
+   {
+    path: "/pastes/:id",
+    element: (
+      <ThemeWrapper>
+        <ProtectedRoute>
+          <ViewPaste />
+        </ProtectedRoute>
+      </ThemeWrapper>
+    ),
+  },
 
      {
     path: "/login",

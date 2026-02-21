@@ -1,8 +1,10 @@
 import {configureStore} from "@reduxjs/toolkit"
 import pasteReducer from "./pasteSlice"
+import authReducer from "./authSlice";
 
 export const store = configureStore({
   reducer:{
-      paste: pasteReducer
-  }
-})
+      paste: pasteReducer,
+      auth: authReducer,
+  },
+});

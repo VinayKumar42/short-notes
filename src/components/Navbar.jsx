@@ -1,58 +1,58 @@
 import { NavbarData } from "../data/Navbar";
 import { NavLink } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 const Navbar = ({ darkMode, toggleTheme }) => {
   return (
-    <div className="w-full h-[45px] flex justify-between items-center p-4 bg-gray-800">
-      {/* Left: Navigation Links */}
-      <div className="flex gap-x-5">
+    <div className="w-full h-[60px] flex justify-between items-center px-6 bg-gray-800">
+
+      {/* LEFT SIDE — NAV LINKS */}
+      <div className="flex gap-x-6">
         {NavbarData.map((link, idx) => (
           <NavLink
             key={idx}
             to={link.path}
             className={({ isActive }) =>
               isActive
-                ? "text-blue-500 font-semibold text-xl"
-                : "text-white font-medium text-xl"
+                ? "text-blue-400 font-semibold text-lg"
+                : "text-white font-medium text-lg hover:text-blue-300 transition"
             }
           >
             {link.title}
           </NavLink>
         ))}
       </div>
-      {/*login and register */}
-     <div className="flex gap-x-5">
-  <NavLink
-    to="/login"
-    className={({ isActive }) =>
-      isActive
-        ? "text-blue-500 font-semibold text-xl"
-        : "text-white font-medium text-xl"
-    }
-  >
-    Sign In
-  </NavLink>
 
-  <NavLink
-    to="/register"
-    className={({ isActive }) =>
-      isActive
-        ? "text-blue-500 font-semibold text-xl"
-        : "text-white font-medium text-xl"
-    }
-  >
-    Sign Up
-  </NavLink>
-</div>
+      {/* RIGHT SIDE */}
+      <div className="flex items-center gap-4">
 
-      {/* Right: Toggle Button */}
-      <button
-        onClick={toggleTheme}
-        className="px-4 py-1 bg-grey-500 text-white rounded hover:bg-blue-700 mr-4 font-bold "
-      >
-        {darkMode ? "Light Mode" : "Dark Mode"}
-      </button>
+        {/* Sign In Button */}
+        <NavLink
+          to="/login"
+          className="px-4 py-1.5 border border-blue-500 text-blue-400 rounded-md
+                     hover:bg-blue-500 hover:text-white transition font-semibold"
+        >
+          Sign In
+        </NavLink>
+
+        {/* Sign Up Button */}
+        <NavLink
+          to="/register"
+          className="px-4 py-1.5 border border-blue-500 text-blue-400 rounded-md
+                     hover:bg-blue-500 hover:text-white transition font-semibold"
+        >
+          Sign Up
+        </NavLink>
+
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="px-4 py-1.5 bg-gray-600 text-white rounded-md
+                     hover:bg-gray-500 transition font-semibold"
+        >
+          {darkMode ? "Light Mode" : "Dark Mode"}
+        </button>
+
+      </div>
     </div>
   );
 };
