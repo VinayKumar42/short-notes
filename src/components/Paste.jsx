@@ -20,7 +20,7 @@ const Paste = ({ darkMode = false }) => {
   );
 
   return (
-    <div className="w-full h-full py-10 max-w-[1200px] mx-auto px-5 lg:px-0">
+    <div className="w-full h-full py-10 max-w-300 mx-auto px-5 lg:px-0">
       <div className="flex flex-col gap-y-3">
         {/* Search */}
         {/* <div className="w-full flex gap-3 px-4 py-2  rounded-[0.3rem] border border-[rgba(128,121,121,0.3)]  mt-6">
@@ -34,19 +34,11 @@ const Paste = ({ darkMode = false }) => {
         </div> */}
 
         {/* //////////// */}
-        <div className={`w-full flex gap-3 px-4 py-2 rounded-[0.3rem] mt-6 transition-all duration-200 ${
-          darkMode
-            ? "bg-gray-800 border border-gray-700 hover:border-gray-600"
-            : "bg-white border border-gray-300 hover:border-gray-400 shadow-sm"
-        }`}>
+        <div className="w-full flex gap-3 px-4 py-2 rounded-[0.3rem] border border-[rgba(128,121,121,0.3)] mt-6">
           <input
             type="search"
             placeholder="Search paste here..."
-            className={`focus:outline-none w-full bg-transparent transition-all duration-200 px-3 py-2 rounded-[0.3rem] ${
-              darkMode
-                ? "text-gray-100 placeholder-gray-500"
-                : "text-gray-900 placeholder-gray-400"
-            }`}
+            className="focus:outline-none w-full bg-transparent transition-all duration-200 hover:bg-black hover:shadow-lg hover:border hover:border-gray-500 text-white px-3 py-2 rounded-[0.3rem]"
             value={searchTerm} // Bind the input to searchTerm state
             onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
           />

@@ -1,13 +1,13 @@
+import { useDispatch, useSelector } from "react-redux";
 import { NavbarData } from "../data/Navbar";
 import { NavLink } from "react-router-dom";
+import { toggleDarkMode } from "../redux/themeSlice";
 
-const Navbar = ({ darkMode, toggleTheme }) => {
+const Navbar = () => {
+  const dispatch = useDispatch();
+  const darkmode = useSelector((state) => state.theme.darkmode);
   return (
-    <div className={`w-full h-[45px] flex justify-between items-center p-4 transition-colors duration-300 ${
-      darkMode 
-        ? "bg-gray-800 border-b border-gray-700" 
-        : "bg-white border-b border-gray-200 shadow-sm"
-    }`}>
+    <div className="w-full h-11.25 flex justify-between items-center p-4 bg-gray-800">
       {/* Left: Navigation Links */}
       <div className="flex gap-x-5">
         {NavbarData.map((link, idx) => (
@@ -31,14 +31,10 @@ const Navbar = ({ darkMode, toggleTheme }) => {
 
       {/* Right: Toggle Button */}
       <button
-        onClick={toggleTheme}
-        className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 ${
-          darkMode
-            ? "bg-gray-700 text-gray-100 hover:bg-gray-600 border border-gray-600"
-            : "bg-gray-900 text-white hover:bg-gray-800 border border-gray-900"
-        }`}
+        onClick={() => dispatch(toggleDarkMode())}
+        className="px-4 py-1 bg-grey-500 text-white rounded hover:bg-blue-700 mr-4 font-bold "
       >
-        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+        {darkmode ? "Light Mode" : "Dark Mode"}
       </button>
     </div>
   );

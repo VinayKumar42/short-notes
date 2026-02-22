@@ -1,10 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import { useState } from "react";
 import Home from "./components/Home"
 import Paste from "./components/Paste"
 import ViewPaste from "./components/ViewPaste"
 import Navbar from "./components/Navbar"
-
+import { useSelector } from "react-redux";
 
 const router = createBrowserRouter(
   [
@@ -28,7 +27,10 @@ const router = createBrowserRouter(
       path: "/pastes",
       element: (
         <ThemeWrapper>
-          {(darkMode) => <Paste darkMode={darkMode} />}
+          {/* <div className="w-full h-full flex flex-col"> */}
+
+          <Paste />
+          {/* </div> */}
         </ThemeWrapper>
       ),
     },
@@ -40,40 +42,29 @@ const router = createBrowserRouter(
     // </div>
     // },
     {
-      path:"/pastes/:id",
-      element: (
-        <ThemeWrapper>
-          {(darkMode) => <ViewPaste darkMode={darkMode} />}
-        </ThemeWrapper>
-      ),
+      path: "/pastes/:id",
+      element: <div className="w-full h-full flex flex-col">
+        <Navbar />
+        <ViewPaste />
+      </div>,
     }
   ]
 )
 
-
 function ThemeWrapper({ children }) {
-  const [darkMode, setDarkMode] = useState(false);
-
-  const toggleTheme = () => {
-    setDarkMode(!darkMode);
-  };
+  const darkmode = useSelector((state) => state.theme.darkmode);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      darkMode 
-        ? "dark bg-gray-900 text-gray-100" 
-        : "bg-gray-50 text-gray-900"
-    }`}>
-      <Navbar darkMode={darkMode} toggleTheme={toggleTheme} />
-      {typeof children === 'function' ? children(darkMode) : children}
+    <div className={darkmode ? "dark bg-gray-900 text-white" : "bg-white text-black"}>
+      <Navbar />
+      {children}
     </div>
   );
 }
 
 function App() {
-
   return (
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   )
 }
 

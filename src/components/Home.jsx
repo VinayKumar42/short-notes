@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { addToPastes, updatePastes } from "../redux/pasteSlice";
 import { useSearchParams } from "react-router-dom";
-import { Calendar, Copy, Eye, PencilLine,PlusCircle, Trash2 } from "lucide-react";
+import { Calendar, Copy, Eye, PencilLine, PlusCircle, Trash2 } from "lucide-react";
 
 const Home = ({ darkMode = false }) => {
   const [value, setValue] = useState("");
@@ -13,6 +13,7 @@ const Home = ({ darkMode = false }) => {
   const pasteId = searchParams.get("pasteId"); // Get pasteId from the search params
   const pastes = useSelector((state) => state.paste.pastes);
   const dispatch = useDispatch();
+  const darkmode = useSelector((state) => state.theme.darkmode);
 
   const createPaste = () => {
     const paste = {
@@ -57,7 +58,7 @@ const Home = ({ darkMode = false }) => {
 
 
   return (
-    <div className="w-full h-full py-10 max-w-[1200px] mx-auto px-5 lg:px-0">
+    <div className="w-full h-full py-10 max-w-300 mx-auto px-5 lg:px-0">
       <div className="flex flex-col gap-y-5 items-start">
         <div className="w-full flex flex-row gap-x-4 justify-between items-center">
           <input
@@ -66,13 +67,7 @@ const Home = ({ darkMode = false }) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             // Dynamic width based on whether pasteId is present
-            className={`${
-              pasteId ? "w-[80%]" : "w-[85%]"
-            } rounded-md p-3 transition-all duration-200 focus:ring-2 focus:ring-blue-500 outline-none ${
-              darkMode
-                ? "bg-gray-800 text-gray-100 border border-gray-700 placeholder-gray-500"
-                : "bg-white text-gray-900 border border-gray-300 placeholder-gray-400"
-            }`}
+            className={`${pasteId ? "w-[80%]" : "w-[85%]"} ${darkmode ? "text-white placeholder-gray-400" : "text-black placeholder-gray-400"} border border-input rounded-md p-2`}
           />
           <button
             className={`font-medium rounded-lg text-sm px-5 py-3 transition-all duration-200 hover:scale-105 whitespace-nowrap ${
@@ -85,43 +80,23 @@ const Home = ({ darkMode = false }) => {
             {pasteId ? "Update Paste" : "Create My Paste"}
           </button>
 
-        {pasteId &&  <button
-            className={`font-medium rounded-lg text-sm px-4 py-3 transition-all duration-200 hover:scale-105 ${
-              darkMode
-                ? "text-white bg-blue-600 hover:bg-blue-700 border border-blue-500"
-                : "text-white bg-blue-700 hover:bg-blue-800 shadow-md"
-            }`}
+          {pasteId && <button
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700"
             onClick={resetPaste}
           >
             <PlusCircle size={20} />
           </button>}
         </div>
 
-        <div
-          className={`w-full flex flex-col items-start relative rounded transition-colors duration-200 ${
-            darkMode
-              ? "bg-gray-800 border border-gray-700"
-              : "bg-white border border-gray-300 shadow-sm"
-          }`}
-        >
-          <div
-            className={`w-full rounded-t flex items-center justify-between gap-x-4 px-4 py-2 ${
-              darkMode ? "border-b border-gray-700" : "border-b border-gray-300"
-            }`}
-          >
+        <div className={`w-full flex flex-col items-start relative rounded bg-opacity-10 border border-[rgba(128,121,121,0.3)] backdrop-blur-2xl`}>
+          <div className={`w-full rounded-t flex items-center justify-between gap-x-4 px-4 py-2 border-b border-[rgba(128,121,121,0.3)]`}>
             <div className="w-full flex gap-x-1.5 items-center select-none group">
-              <div className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(255,95,87)]" />
-
-              <div
-                className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(254,188,46)]"
-              />
-
-              <div className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(45,200,66)]" />
+              <div className="w-3.25 h-3.25 rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(255,95,87)]" />
+              <div className={`w-3.25 h-3.25 rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(254,188,46)]`} />
+              <div className="w-3.25 h-3.25 rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(45,200,66)]" />
             </div>
             {/* Circle and copy btn */}
-            <div
-              className={`w-fit rounded-t flex items-center justify-between gap-x-4 px-4`}
-            >
+            <div className={`w-fit rounded-t flex items-center justify-between gap-x-4 px-4`}>
               {/*Copy  button */}
               <button
                 className={`flex justify-center items-center transition-all duration-300 ease-in-out group`}
@@ -149,11 +124,7 @@ const Home = ({ darkMode = false }) => {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="Write Your Content Here...."
-            className={`w-full p-4 focus:outline-none resize-none transition-colors duration-200 ${
-              darkMode
-                ? "bg-gray-800 text-gray-100 placeholder-gray-500"
-                : "bg-white text-gray-900 placeholder-gray-400"
-            }`}
+            className={`w-full p-3  focus-visible:ring-0 ${darkmode ? "text-white placeholder-gray-400" : "text-black placeholder-gray-400"}`}
             style={{
               caretColor: darkMode ? "#fff" : "#000",
             }}
