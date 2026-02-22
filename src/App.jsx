@@ -3,6 +3,10 @@ import Home from "./components/Home"
 import Paste from "./components/Paste"
 import ViewPaste from "./components/ViewPaste"
 import Navbar from "./components/Navbar"
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
+
 import { useSelector } from "react-redux";
 
 const router = createBrowserRouter(
@@ -23,17 +27,14 @@ const router = createBrowserRouter(
         </ThemeWrapper>
       ),
     },
-    {
-      path: "/pastes",
-      element: (
-        <ThemeWrapper>
-          {/* <div className="w-full h-full flex flex-col"> */}
-
+      {
+    path: "/pastes",
+    element: (
+      <ThemeWrapper> 
           <Paste />
-          {/* </div> */}
-        </ThemeWrapper>
-      ),
-    },
+      </ThemeWrapper>
+    ),
+  },
     // {
     //   path:"/pastes",
     //   element: <div className="w-full h-full flex flex-col">
@@ -41,13 +42,32 @@ const router = createBrowserRouter(
     //   <Paste/>
     // </div>
     // },
-    {
-      path: "/pastes/:id",
-      element: <div className="w-full h-full flex flex-col">
-        <Navbar />
-        <ViewPaste />
-      </div>,
-    }
+   {
+    path: "/pastes/:id",
+    element: (
+      <ThemeWrapper>
+          <ViewPaste />
+      </ThemeWrapper>
+    ),
+  },
+
+     {
+    path: "/login",
+    element: (
+      <ThemeWrapper>
+        <Login />
+      </ThemeWrapper>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <ThemeWrapper>
+        <Register />
+      </ThemeWrapper>
+    ),
+  },
+
   ]
 )
 

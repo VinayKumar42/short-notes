@@ -16,8 +16,8 @@ const Navbar = () => {
             to={link.path}
             className={({ isActive }) =>
               isActive
-                ? "text-blue-500 font-semibold text-xl"
-                : "text-white font-medium text-xl"
+                ? "text-blue-400 font-semibold text-lg"
+                : "text-white font-medium text-lg hover:text-blue-300 transition"
             }
           >
             {link.title}
@@ -25,6 +25,28 @@ const Navbar = () => {
         ))}
       </div>
 
+      {/* RIGHT SIDE */}
+      <div className="flex items-center gap-4">
+
+        {/* Sign In Button */}
+        <NavLink
+          to="/login"
+          className="px-4 py-1.5 border border-blue-500 text-blue-400 rounded-md
+                     hover:bg-blue-500 hover:text-white transition font-semibold"
+        >
+          Sign In
+        </NavLink>
+
+        {/* Sign Up Button */}
+        <NavLink
+          to="/register"
+          className="px-4 py-1.5 border border-blue-500 text-blue-400 rounded-md
+                     hover:bg-blue-500 hover:text-white transition font-semibold"
+        >
+          Sign Up
+        </NavLink>
+
+      </div>
       {/* Right: Toggle Button */}
       <button
         onClick={() => dispatch(toggleDarkMode())}
