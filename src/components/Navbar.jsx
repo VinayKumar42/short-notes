@@ -15,9 +15,13 @@ const Navbar = () => {
             key={idx}
             to={link.path}
             className={({ isActive }) =>
-              isActive
-                ? "text-blue-500 font-semibold text-xl"
-                : "text-white font-medium text-xl"
+              `font-semibold text-xl transition-colors duration-200 ${
+                isActive
+                  ? "text-blue-500"
+                  : darkMode
+                  ? "text-gray-300 hover:text-white"
+                  : "text-gray-700 hover:text-gray-900"
+              }`
             }
           >
             {link.title}

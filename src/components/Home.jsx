@@ -6,7 +6,7 @@ import { addToPastes, updatePastes } from "../redux/pasteSlice";
 import { useSearchParams } from "react-router-dom";
 import { Calendar, Copy, Eye, PencilLine, PlusCircle, Trash2 } from "lucide-react";
 
-const Home = () => {
+const Home = ({ darkMode = false }) => {
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
   const [searchParams, setSearchParams] = useSearchParams(); // Destructure useSearchParams
@@ -70,7 +70,11 @@ const Home = () => {
             className={`${pasteId ? "w-[80%]" : "w-[85%]"} ${darkmode ? "text-white placeholder-gray-400" : "text-black placeholder-gray-400"} border border-input rounded-md p-2`}
           />
           <button
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700"
+            className={`font-medium rounded-lg text-sm px-5 py-3 transition-all duration-200 hover:scale-105 whitespace-nowrap ${
+              darkMode
+                ? "text-white bg-blue-600 hover:bg-blue-700 border border-blue-500"
+                : "text-white bg-blue-700 hover:bg-blue-800 shadow-md"
+            }`}
             onClick={createPaste}
           >
             {pasteId ? "Update Paste" : "Create My Paste"}
@@ -95,7 +99,7 @@ const Home = () => {
             <div className={`w-fit rounded-t flex items-center justify-between gap-x-4 px-4`}>
               {/*Copy  button */}
               <button
-                className={`flex justify-center items-center  transition-all duration-300 ease-in-out group`}
+                className={`flex justify-center items-center transition-all duration-300 ease-in-out group`}
                 onClick={() => {
                   navigator.clipboard.writeText(value);
                   toast.success("Copied to Clipboard", {
@@ -103,7 +107,14 @@ const Home = () => {
                   });
                 }}
               >
-                <Copy className="group-hover:text-sucess-500" size={20} />
+                <Copy 
+                  className={`transition-colors ${
+                    darkMode
+                      ? "text-gray-400 group-hover:text-green-400"
+                      : "text-gray-600 group-hover:text-green-600"
+                  }`} 
+                  size={20} 
+                />
               </button>
             </div>
           </div>
@@ -115,7 +126,7 @@ const Home = () => {
             placeholder="Write Your Content Here...."
             className={`w-full p-3  focus-visible:ring-0 ${darkmode ? "text-white placeholder-gray-400" : "text-black placeholder-gray-400"}`}
             style={{
-              caretColor: "#000",
+              caretColor: darkMode ? "#fff" : "#000",
             }}
             rows={20}
           />

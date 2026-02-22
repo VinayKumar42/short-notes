@@ -19,7 +19,7 @@ const router = createBrowserRouter(
       path: "/",
       element: (
         <ThemeWrapper>
-          <Home />
+          {(darkMode) => <Home darkMode={darkMode} />}
         </ThemeWrapper>
       ),
     },

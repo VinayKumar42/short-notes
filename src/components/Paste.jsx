@@ -5,7 +5,7 @@ import { useState } from "react"; // Import useState
 import { removeFromPastes } from "../redux/pasteSlice";
 import { FormatDate } from "../utlis/formatDate";
 
-const Paste = () => {
+const Paste = ({ darkMode = false }) => {
   const pastes = useSelector((state) => state.paste.pastes);
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState(""); // State to hold the search term
@@ -45,8 +45,16 @@ const Paste = () => {
         </div>
 
         {/* All Pastes */}
-        <div className="flex flex-col border border-[rgba(128,121,121,0.3)] py-4 rounded-[0.4rem]">
-          <h2 className="px-4 text-4xl font-bold border-b border-[rgba(128,121,121,0.3)] pb-4">
+        <div className={`flex flex-col py-4 rounded-[0.4rem] transition-colors duration-200 ${
+          darkMode
+            ? "border border-gray-700 bg-gray-800"
+            : "border border-gray-300 bg-white shadow-sm"
+        }`}>
+          <h2 className={`px-4 text-4xl font-bold pb-4 ${
+            darkMode
+              ? "border-b border-gray-700 text-gray-100"
+              : "border-b border-gray-300 text-gray-900"
+          }`}>
             All Pastes
           </h2>
           <div className="w-full px-4 pt-4 flex flex-col gap-y-5">
@@ -54,12 +62,22 @@ const Paste = () => {
               filteredPastes.map((paste) => (
                 <div
                   key={paste?._id}
-                  className="border border-[rgba(128,121,121,0.3)] w-full gap-y-6 justify-between flex flex-col sm:flex-row p-4 rounded-[0.3rem]"
+                  className={`w-full gap-y-6 justify-between flex flex-col sm:flex-row p-4 rounded-[0.3rem] transition-all duration-200 ${
+                    darkMode
+                      ? "border border-gray-700 bg-gray-750 hover:border-gray-600"
+                      : "border border-gray-300 bg-gray-50 hover:border-gray-400 shadow-sm"
+                  }`}
                 >
                   {/* heading and Description */}
                   <div className="w-[50%] flex flex-col space-y-3">
-                    <p className="text-4xl font-semibold ">{paste?.title}</p>
-                    <p className="text-sm font-normal line-clamp-3 max-w-[80%] text-[#707070]">
+                    <p className={`text-4xl font-semibold ${
+                      darkMode ? "text-gray-100" : "text-gray-900"
+                    }`}>
+                      {paste?.title}
+                    </p>
+                    <p className={`text-sm font-normal line-clamp-3 max-w-[80%] ${
+                      darkMode ? "text-gray-400" : "text-gray-600"
+                    }`}>
                       {paste?.content}
                     </p>
                   </div>
@@ -68,49 +86,85 @@ const Paste = () => {
                   <div className="flex flex-col gap-y-4 sm:items-end">
                     <div className="flex gap-2 flex-wrap sm:flex-nowrap">
                       <button
-                        className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7]  hover:bg-transparent group hover:border-blue-500"
+                        className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                          darkMode
+                            ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-blue-500"
+                            : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-blue-500 shadow-sm"
+                        }`}
                       >
                         <a href={`/?pasteId=${paste?._id}`}>
                           <PencilLine
-                            className="text-black group-hover:text-blue-500"
+                            className={`transition-colors ${
+                              darkMode
+                                ? "text-gray-300 group-hover:text-blue-400"
+                                : "text-gray-700 group-hover:text-blue-600"
+                            }`}
                             size={20}
                           />
                         </a>
                       </button>
                       <button
-                        className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7]  hover:bg-transparent group hover:border-pink-500"
+                        className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                          darkMode
+                            ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-pink-500"
+                            : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-pink-500 shadow-sm"
+                        }`}
                         onClick={() => handleDelete(paste?._id)}
                       >
                         <Trash2
-                          className="text-black group-hover:text-pink-500"
+                          className={`transition-colors ${
+                            darkMode
+                              ? "text-gray-300 group-hover:text-pink-400"
+                              : "text-gray-700 group-hover:text-pink-600"
+                          }`}
                           size={20}
                         />
                       </button>
 
-                      <button className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7]  hover:bg-transparent group hover:border-orange-500">
+                      <button className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                        darkMode
+                          ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-orange-500"
+                          : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-orange-500 shadow-sm"
+                      }`}>
                         <a href={`/pastes/${paste?._id}`} target="_blank" rel="noreferrer">
                           <Eye
-                            className="text-black group-hover:text-orange-500"
+                            className={`transition-colors ${
+                              darkMode
+                                ? "text-gray-300 group-hover:text-orange-400"
+                                : "text-gray-700 group-hover:text-orange-600"
+                            }`}
                             size={20}
                           />
                         </a>
                       </button>
                       <button
-                        className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7]  hover:bg-transparent group hover:border-green-500"
+                        className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                          darkMode
+                            ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-green-500"
+                            : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-green-500 shadow-sm"
+                        }`}
                         onClick={() => {
                           navigator.clipboard.writeText(paste?.content);
                           toast.success("Copied to Clipboard");
                         }}
                       >
                         <Copy
-                          className="text-black group-hover:text-green-500"
+                          className={`transition-colors ${
+                            darkMode
+                              ? "text-gray-300 group-hover:text-green-400"
+                              : "text-gray-700 group-hover:text-green-600"
+                          }`}
                           size={20}
                         />
                       </button>
 
                       {/* Share Button */}
                       <button
-                        className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7] hover:bg-transparent group hover:border-purple-500"
+                        className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                          darkMode
+                            ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-purple-500"
+                            : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-purple-500 shadow-sm"
+                        }`}
                       >
                         <a
                           href={`https://wa.me/?text=${encodeURIComponent(
@@ -120,22 +174,30 @@ const Paste = () => {
                           rel="noopener noreferrer"
                         >
                           <Share2
-                            className="text-black group-hover:text-purple-500"
+                            className={`transition-colors ${
+                              darkMode
+                                ? "text-gray-300 group-hover:text-purple-400"
+                                : "text-gray-700 group-hover:text-purple-600"
+                            }`}
                             size={20}
                           />
                         </a>
                       </button>
                     </div>
 
-                    <div className="gap-x-2 flex ">
-                      <Calendar className="text-black" size={20} />
+                    <div className={`gap-x-2 flex items-center ${
+                      darkMode ? "text-gray-400" : "text-gray-600"
+                    }`}>
+                      <Calendar size={20} />
                       {FormatDate(paste?.createdAt)}
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-2xl text-center w-full text-chileanFire-500">
+              <div className={`text-2xl text-center w-full py-8 ${
+                darkMode ? "text-gray-400" : "text-gray-600"
+              }`}>
                 No Data Found
               </div>
             )}
