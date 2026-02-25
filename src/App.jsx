@@ -5,6 +5,7 @@ import ViewPaste from "./components/ViewPaste"
 import Navbar from "./components/Navbar"
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Footer from "./components/Footer";
 
 
 import { useSelector } from "react-redux";
@@ -75,9 +76,23 @@ function ThemeWrapper({ children }) {
   const darkmode = useSelector((state) => state.theme.darkmode);
 
   return (
-    <div className={darkmode ? "dark bg-gray-900 text-white" : "bg-white text-black"}>
+    <div
+      className={`min-h-screen flex flex-col ${
+        darkmode
+          ? "dark bg-gray-900 text-white"
+          : "bg-white text-black"
+      }`}
+    >
+      {/* Top */}
       <Navbar />
-      {children}
+
+      {/* Middle content */}
+      <main className="grow">
+        {children}
+      </main>
+
+      {/* Bottom */}
+      <Footer />
     </div>
   );
 }
