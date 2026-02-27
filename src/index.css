@@ -1,1 +1,61 @@
 @import "tailwindcss";
+
+/* CSS Custom Properties - used throughout the app via var() */
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1e40af;
+  --color-primary-light: #60a5fa;
+  --color-danger: #ef4444;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-info: #0ea5e9;
+  --color-text-light: #000000;
+  --color-text-dark: #ffffff;
+  --color-bg-light: #ffffff;
+  --color-bg-dark: #111827;
+  --color-border-light: rgba(128, 121, 121, 0.3);
+  --color-border: #d1d5db;
+  --color-border-dark: #374151;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  transition-property: background-color, border-color, color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/*
+ * INLINED UTILITY CLASSES FOR TAILWIND CSS 4 COMPATIBILITY
+ * 
+ * These were previously in @layer components with @apply directives
+ * but are incompatible with Tailwind v4's strict @apply rules.
+ * All classes are now inlined directly in JSX className props.
+ * 
+ * Reference for inlining:
+ * ----- BUTTONS -----
+ * .btn-primary: px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
+ * .btn-primary-dark: dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-offset-gray-900
+ * .btn-secondary: px-2 py-2 rounded-[0.2rem] border transition-all duration-200
+ * .btn-icon: p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
+ * .btn-icon-dark: dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800
+ * 
+ * ----- CARDS -----
+ * .card: border border-gray-200 rounded-[0.3rem] backdrop-blur-2xl bg-opacity-10
+ * .card-dark: dark:border-gray-700
+ * 
+ * ----- INPUTS & TEXTAREAS -----
+ * .input-base: border border-gray-300 rounded-md p-2 transition-colors duration-200
+ * .input-dark: dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:placeholder-gray-400
+ * .textarea-base: w-full p-3 bg-white text-black focus-visible:ring-0 transition-colors duration-200
+ * .textarea-dark: dark:bg-gray-800 dark:text-white dark:placeholder-gray-400
+ * 
+ * ----- TEXT UTILITIES -----
+ * .text-muted: text-gray-500 dark:text-gray-400
+ * .text-muted-dark: dark:text-gray-400
+ * .sr-only: absolute w-1 h-1 p-0 -m-1 overflow-hidden clip-rect-0 whitespace-nowrap border-0
+ * .border-base: border-gray-200 dark:border-gray-700
+ */
