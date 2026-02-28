@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import { removeFromPastes } from "../redux/pasteSlice";
 import { FormatDate } from "../utlis/formatDate";
 
-const Paste = () => {
+const Paste = ({ darkMode = false }) => {
   const pastes = useSelector((state) => state.paste.pastes);
   const darkmode = useSelector((state) => state.theme.darkmode);
   const dispatch = useDispatch();
@@ -48,18 +48,17 @@ const Paste = () => {
           />
         </div>
 
-        {/* All Pastes Section */}
-        <div
-          className={`flex flex-col border rounded-lg overflow-hidden transition-colors duration-200 ${
-            darkmode ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
-          }`}
-        >
-          {/* Header */}
-          <h2
-            className={`px-4 sm:px-6 py-4 text-2xl sm:text-3xl md:text-4xl font-bold border-b transition-colors duration-200 ${
-              darkmode ? "border-gray-700 bg-gray-700" : "border-gray-200 bg-gray-50"
-            }`}
-          >
+        {/* All Pastes */}
+        <div className={`flex flex-col py-4 rounded-[0.4rem] transition-colors duration-200 ${
+          darkMode
+            ? "border border-gray-700 bg-gray-800"
+            : "border border-gray-300 bg-white shadow-sm"
+        }`}>
+          <h2 className={`px-4 text-4xl font-bold pb-4 ${
+            darkMode
+              ? "border-b border-gray-700 text-gray-100"
+              : "border-b border-gray-300 text-gray-900"
+          }`}>
             All Pastes
           </h2>
 
@@ -69,20 +68,34 @@ const Paste = () => {
               filteredPastes.map((paste) => (
                 <div
                   key={paste?._id}
-                  role="listitem"
-                  className={`border rounded-lg p-4 sm:p-6 transition-all duration-200 ${
-                    darkmode
-                      ? "border-gray-700 hover:border-gray-600 bg-gray-800"
-                      : "border-gray-200 hover:border-gray-300 bg-gray-50"
+                  className={`w-full gap-y-6 justify-between flex flex-col sm:flex-row p-4 rounded-[0.3rem] transition-all duration-200 ${
+                    darkMode
+                      ? "border border-gray-700 bg-gray-750 hover:border-gray-600"
+                      : "border border-gray-300 bg-gray-50 hover:border-gray-400 shadow-sm"
                   }`}
                 >
-                  {/* Content Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                    {/* Left: Title & Content Preview */}
-                    <div className="flex flex-col gap-3">
-                      <h3
-                        className={`text-xl sm:text-2xl md:text-3xl font-bold line-clamp-2 ${
-                          darkmode ? "text-white" : "text-black"
+                  {/* heading and Description */}
+                  <div className="w-[50%] flex flex-col space-y-3">
+                    <p className={`text-4xl font-semibold ${
+                      darkMode ? "text-gray-100" : "text-gray-900"
+                    }`}>
+                      {paste?.title}
+                    </p>
+                    <p className={`text-sm font-normal line-clamp-3 max-w-[80%] ${
+                      darkMode ? "text-gray-400" : "text-gray-600"
+                    }`}>
+                      {paste?.content}
+                    </p>
+                  </div>
+
+                  {/* icons */}
+                  <div className="flex flex-col gap-y-4 sm:items-end">
+                    <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                      <button
+                        className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                          darkMode
+                            ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-blue-500"
+                            : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-blue-500 shadow-sm"
                         }`}
                       >
                         {paste?.title}
@@ -109,54 +122,78 @@ const Paste = () => {
                           aria-label="Edit paste"
                         >
                           <PencilLine
-                            className="text-black dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors duration-200"
-                            size={18}
+                            className={`transition-colors ${
+                              darkMode
+                                ? "text-gray-300 group-hover:text-blue-400"
+                                : "text-gray-700 group-hover:text-blue-600"
+                            }`}
+                            size={20}
                           />
                         </a>
+                      </button>
+                      <button
+                        className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                          darkMode
+                            ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-pink-500"
+                            : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-pink-500 shadow-sm"
+                        }`}
+                        onClick={() => handleDelete(paste?._id)}
+                      >
+                        <Trash2
+                          className={`transition-colors ${
+                            darkMode
+                              ? "text-gray-300 group-hover:text-pink-400"
+                              : "text-gray-700 group-hover:text-pink-600"
+                          }`}
+                          size={20}
+                        />
+                      </button>
 
-                        {/* Delete Button */}
-                        <button
-                          onClick={() => handleDelete(paste?._id)}
-                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
-                          title="Delete paste"
-                          aria-label="Delete paste"
-                        >
-                          <Trash2
-                            className="text-black dark:text-white group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors duration-200"
-                            size={18}
-                          />
-                        </button>
-
-                        {/* View Button */}
-                        <a
-                          href={`/pastes/${paste?._id}`}
-                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
-                          title="View paste"
-                          aria-label="View paste"
-                        >
+                      <button className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                        darkMode
+                          ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-orange-500"
+                          : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-orange-500 shadow-sm"
+                      }`}>
+                        <a href={`/pastes/${paste?._id}`} target="_blank" rel="noreferrer">
                           <Eye
-                            className="text-black dark:text-white group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors duration-200"
-                            size={18}
+                            className={`transition-colors ${
+                              darkMode
+                                ? "text-gray-300 group-hover:text-orange-400"
+                                : "text-gray-700 group-hover:text-orange-600"
+                            }`}
+                            size={20}
                           />
                         </a>
+                      </button>
+                      <button
+                        className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                          darkMode
+                            ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-green-500"
+                            : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-green-500 shadow-sm"
+                        }`}
+                        onClick={() => {
+                          navigator.clipboard.writeText(paste?.content);
+                          toast.success("Copied to Clipboard");
+                        }}
+                      >
+                        <Copy
+                          className={`transition-colors ${
+                            darkMode
+                              ? "text-gray-300 group-hover:text-green-400"
+                              : "text-gray-700 group-hover:text-green-600"
+                          }`}
+                          size={20}
+                        />
+                      </button>
 
-                        {/* Copy Button */}
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(paste?.content);
-                            toast.success("Copied to Clipboard");
-                          }}
-                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
-                          title="Copy to clipboard"
-                          aria-label="Copy to clipboard"
-                        >
-                          <Copy
-                            className="text-black dark:text-white group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors duration-200"
-                            size={18}
-                          />
-                        </button>
-
-                        {/* Share Button */}
+                      {/* Share Button */}
+                      <button
+                        className={`p-2 rounded-[0.2rem] transition-all duration-200 group ${
+                          darkMode
+                            ? "bg-gray-700 border border-gray-600 hover:bg-gray-600 hover:border-purple-500"
+                            : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-purple-500 shadow-sm"
+                        }`}
+                      >
                         <a
                           href={`https://wa.me/?text=${encodeURIComponent(
                             `Check out this paste: ${paste?.title}\n\n${paste?.content}`
@@ -168,60 +205,30 @@ const Paste = () => {
                           aria-label="Share on WhatsApp"
                         >
                           <Share2
-                            className="text-black dark:text-white group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors duration-200"
-                            size={18}
+                            className={`transition-colors ${
+                              darkMode
+                                ? "text-gray-300 group-hover:text-purple-400"
+                                : "text-gray-700 group-hover:text-purple-600"
+                            }`}
+                            size={20}
                           />
                         </a>
                       </div>
 
-                      {/* Date - Desktop Only */}
-                      <div className="hidden md:flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        <Calendar size={16} />
-                        <span>{FormatDate(paste?.createdAt)}</span>
-                      </div>
+                    <div className={`gap-x-2 flex items-center ${
+                      darkMode ? "text-gray-400" : "text-gray-600"
+                    }`}>
+                      <Calendar size={20} />
+                      {FormatDate(paste?.createdAt)}
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div
-                className={`text-center py-16 px-4 border-t transition-colors duration-200 ${
-                  darkmode ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
-                }`}
-              >
-                <StickyNote
-                  size={48}
-                  className="mx-auto mb-4 text-gray-400 dark:text-gray-600"
-                />
-                <h3
-                  className={`text-2xl sm:text-3xl font-bold mb-2 ${
-                    darkmode ? "text-white" : "text-black"
-                  }`}
-                >
-                  {searchTerm ? "No results found" : "No notes yet"}
-                </h3>
-                <p
-                  className={`text-sm sm:text-base mb-6 ${
-                    darkmode ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
-                  {searchTerm
-                    ? "Try a different search term to find your notes"
-                    : "Create your first note to get started"}
-                </p>
-
-                {searchTerm ? (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-offset-gray-900"
-                  >
-                    Clear Search
-                  </button>
-                ) : (
-                  <NavLink to="/" className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-offset-gray-900 inline-block">
-                    + Create a Note
-                  </NavLink>
-                )}
+              <div className={`text-2xl text-center w-full py-8 ${
+                darkMode ? "text-gray-400" : "text-gray-600"
+              }`}>
+                No Data Found
               </div>
             )}
           </div>

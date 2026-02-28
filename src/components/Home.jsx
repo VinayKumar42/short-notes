@@ -6,7 +6,7 @@ import { addToPastes, updatePastes } from "../redux/pasteSlice";
 import { useSearchParams } from "react-router-dom";
 import { Copy, PlusCircle } from "lucide-react";
 
-const Home = () => {
+const Home = ({ darkMode = false }) => {
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -82,21 +82,35 @@ const Home = () => {
               darkmode ? "bg-gray-800 text-white" : "bg-white text-black"
             }`}
           />
-          <div className="flex gap-2">
-            <button
-              className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-offset-gray-900 text-xs sm:text-sm whitespace-nowrap"
-              onClick={createPaste}
-            >
-              {pasteId ? "Update Paste" : "Create Paste"}
-            </button>
+          <button
+            className={`font-medium rounded-lg text-sm px-5 py-3 transition-all duration-200 hover:scale-105 whitespace-nowrap ${
+              darkMode
+                ? "text-white bg-blue-600 hover:bg-blue-700 border border-blue-500"
+                : "text-white bg-blue-700 hover:bg-blue-800 shadow-md"
+            }`}
+            onClick={createPaste}
+          >
+            {pasteId ? "Update Paste" : "Create My Paste"}
+          </button>
 
             {pasteId && (
               <button
-                className="px-3 sm:px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-offset-gray-900 text-xs sm:text-sm"
-                onClick={resetPaste}
-                aria-label="Create new paste"
+                className={`flex justify-center items-center transition-all duration-300 ease-in-out group`}
+                onClick={() => {
+                  navigator.clipboard.writeText(value);
+                  toast.success("Copied to Clipboard", {
+                    position: "top-right",
+                  });
+                }}
               >
-                <PlusCircle size={18} />
+                <Copy 
+                  className={`transition-colors ${
+                    darkMode
+                      ? "text-gray-400 group-hover:text-green-400"
+                      : "text-gray-600 group-hover:text-green-600"
+                  }`} 
+                  size={20} 
+                />
               </button>
             )}
           </div>
@@ -146,12 +160,12 @@ const Home = () => {
           <textarea
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="Write your content here..."
-            className={`w-full p-3 bg-white text-black focus-visible:ring-0 transition-colors duration-200 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 resize-y font-mono text-sm ${
-              darkmode ? "bg-gray-800 text-white" : "bg-white text-black"
-            }`}
-            style={{ caretColor: darkmode ? "#fff" : "#000" }}
-            rows={textareaRows}
+            placeholder="Write Your Content Here...."
+            className={`w-full p-3  focus-visible:ring-0 ${darkmode ? "text-white placeholder-gray-400" : "text-black placeholder-gray-400"}`}
+            style={{
+              caretColor: darkMode ? "#fff" : "#000",
+            }}
+            rows={20}
           />
         </div>
       </div>
