@@ -2,21 +2,45 @@ import { Copy } from "lucide-react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const ViewPaste = ({ darkMode = false }) => {
   const { id } = useParams();
-
-  console.log(id)
-
   const pastes = useSelector((state) => state.paste.pastes);
+  const darkmode = useSelector((state) => state.theme.darkmode);
+  const [textareaRows, setTextareaRows] = useState(20);
 
-  // Filter pastes based on search term (by title or content)
   const paste = pastes.filter((paste) => paste._id === id)[0];
 
-  console.log("Paste->",paste);
+  // Update textarea rows based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setTextareaRows(10);
+      } else {
+        setTextareaRows(20);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  if (!paste) {
+    return (
+      <div className="w-full h-full py-10 px-4 sm:px-5 max-w-3xl mx-auto flex items-center justify-center">
+        <p className="text-lg sm:text-2xl text-gray-500 dark:text-gray-400">
+          Paste not found
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-full py-10 max-w-[1200px] mx-auto px-5 lg:px-0">
-      <div className="flex flex-col gap-y-5 items-start">
+    <div className="w-full py-6 sm:py-10 px-4 sm:px-5 max-w-3xl mx-auto">
+      <div className="flex flex-col gap-y-5">
+        {/* Title Input */}
         <input
           type="text"
           placeholder="Title"
@@ -28,6 +52,8 @@ const ViewPaste = ({ darkMode = false }) => {
               : "bg-gray-100 text-gray-900 border border-gray-300"
           }`}
         />
+
+        {/* Viewer Container */}
         <div
           className={`w-full flex flex-col items-start relative rounded transition-colors duration-200 ${
             darkMode
@@ -35,6 +61,7 @@ const ViewPaste = ({ darkMode = false }) => {
               : "bg-white border border-gray-300 shadow-sm"
           }`}
         >
+          {/* Decorative Header (macOS-style window controls) */}
           <div
             className={`w-full rounded-t flex items-center justify-between gap-x-4 px-4 py-2 ${
               darkMode ? "border-b border-gray-700" : "border-b border-gray-300"
@@ -49,9 +76,15 @@ const ViewPaste = ({ darkMode = false }) => {
 
               <div className="w-[13px] h-[13px] rounded-full flex items-center justify-center p-px overflow-hidden bg-[rgb(45,200,66)]" />
             </div>
-            {/* Circle and copy btn */}
-            <div
-              className={`w-fit rounded-t flex items-center justify-between gap-x-4 px-4`}
+            <div className="flex-1" />
+            {/* Copy Button */}
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(paste.content);
+                toast.success("Copied to Clipboard");
+              }}
+              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 group"
+              aria-label="Copy to clipboard"
             >
               {/*Copy  button */}
               <button
@@ -73,7 +106,7 @@ const ViewPaste = ({ darkMode = false }) => {
             </div>
           </div>
 
-          {/* TextArea */}
+          {/* Textarea */}
           <textarea
             value={paste.content}
             disabled

@@ -1,46 +1,50 @@
-import { Calendar, Copy, Eye, PencilLine, Trash2, Share2 } from "lucide-react"; // Import Share2 icon
+import { Calendar, Copy, Eye, PencilLine, Trash2, Share2, StickyNote } from "lucide-react";
 import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react"; // Import useState
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { removeFromPastes } from "../redux/pasteSlice";
 import { FormatDate } from "../utlis/formatDate";
 
 const Paste = ({ darkMode = false }) => {
   const pastes = useSelector((state) => state.paste.pastes);
+  const darkmode = useSelector((state) => state.theme.darkmode);
   const dispatch = useDispatch();
-  const [searchTerm, setSearchTerm] = useState(""); // State to hold the search term
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleDelete = (id) => {
     dispatch(removeFromPastes(id));
   };
 
-  // Filter pastes based on search term (by title or content)
   const filteredPastes = pastes.filter((paste) =>
     paste.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="w-full h-full py-10 max-w-300 mx-auto px-5 lg:px-0">
-      <div className="flex flex-col gap-y-3">
-        {/* Search */}
-        {/* <div className="w-full flex gap-3 px-4 py-2  rounded-[0.3rem] border border-[rgba(128,121,121,0.3)]  mt-6">
+    <div className="w-full py-6 sm:py-10 px-4 sm:px-5 max-w-3xl mx-auto">
+      <div className="flex flex-col gap-y-5">
+        {/* Search Input */}
+        <div
+          className={`w-full flex gap-3 px-4 py-3 rounded-lg border transition-all duration-200 ${
+            darkmode
+              ? "bg-gray-800 border-gray-700 hover:border-gray-600"
+              : "bg-white border-gray-200 hover:border-gray-300"
+          }`}
+        >
+          <label htmlFor="search-pastes" className="absolute w-1 h-1 p-0 -m-1 overflow-hidden clip-rect-0 whitespace-nowrap border-0">
+            Search pastes by title
+          </label>
           <input
+            id="search-pastes"
             type="search"
-            placeholder="Search paste here..."
-            className="focus:outline-none w-full bg-transparent"
-            value={searchTerm} // Bind the input to searchTerm state
-            onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
-          />
-        </div> */}
-
-        {/* //////////// */}
-        <div className="w-full flex gap-3 px-4 py-2 rounded-[0.3rem] border border-[rgba(128,121,121,0.3)] mt-6">
-          <input
-            type="search"
-            placeholder="Search paste here..."
-            className="focus:outline-none w-full bg-transparent transition-all duration-200 hover:bg-black hover:shadow-lg hover:border hover:border-gray-500 text-white px-3 py-2 rounded-[0.3rem]"
-            value={searchTerm} // Bind the input to searchTerm state
-            onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
+            placeholder="Search pastes by title..."
+            className={`focus:outline-none w-full bg-transparent text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 rounded px-2 py-1 ${
+              darkmode
+                ? "text-white placeholder-gray-500"
+                : "text-black placeholder-gray-400"
+            }`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
@@ -57,7 +61,9 @@ const Paste = ({ darkMode = false }) => {
           }`}>
             All Pastes
           </h2>
-          <div className="w-full px-4 pt-4 flex flex-col gap-y-5">
+
+          {/* Pastes List */}
+          <div className="w-full px-4 sm:px-6 py-4 sm:py-6 flex flex-col gap-y-4 sm:gap-y-6" role="list" aria-live="polite" aria-atomic="true">
             {filteredPastes.length > 0 ? (
               filteredPastes.map((paste) => (
                 <div
@@ -92,7 +98,29 @@ const Paste = ({ darkMode = false }) => {
                             : "bg-white border border-gray-300 hover:bg-gray-50 hover:border-blue-500 shadow-sm"
                         }`}
                       >
-                        <a href={`/?pasteId=${paste?._id}`}>
+                        {paste?.title}
+                      </h3>
+                      <p className="text-sm sm:text-base line-clamp-3 text-gray-500 dark:text-gray-400">
+                        {paste?.content}
+                      </p>
+                      {/* Date - Mobile Only */}
+                      <div className="flex items-center gap-2 md:hidden text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        <Calendar size={16} />
+                        <span>{FormatDate(paste?.createdAt)}</span>
+                      </div>
+                    </div>
+
+                    {/* Right: Action Buttons */}
+                    <div className="flex flex-col gap-3 md:items-end md:justify-between">
+                      {/* Button Row */}
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
+                        {/* Edit Button */}
+                        <a
+                          href={`/?pasteId=${paste?._id}`}
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
+                          title="Edit paste"
+                          aria-label="Edit paste"
+                        >
                           <PencilLine
                             className={`transition-colors ${
                               darkMode
@@ -172,6 +200,9 @@ const Paste = ({ darkMode = false }) => {
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
+                          title="Share on WhatsApp"
+                          aria-label="Share on WhatsApp"
                         >
                           <Share2
                             className={`transition-colors ${
@@ -182,8 +213,7 @@ const Paste = ({ darkMode = false }) => {
                             size={20}
                           />
                         </a>
-                      </button>
-                    </div>
+                      </div>
 
                     <div className={`gap-x-2 flex items-center ${
                       darkMode ? "text-gray-400" : "text-gray-600"
