@@ -1,7 +1,7 @@
 import { Calendar, Copy, Eye, PencilLine, Trash2, Share2, StickyNote } from "lucide-react";
 import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { removeFromPastes } from "../redux/pasteSlice";
 import { FormatDate } from "../utlis/formatDate";
@@ -11,13 +11,24 @@ const Paste = () => {
   const darkmode = useSelector((state) => state.theme.darkmode);
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  // Debounce search term for better performance
+  useEffect(() => {
+    const delayTimer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(delayTimer);
+  }, [searchTerm]);
 
   const handleDelete = (id) => {
     dispatch(removeFromPastes(id));
   };
 
   const filteredPastes = pastes.filter((paste) =>
-    paste.title.toLowerCase().includes(searchTerm.toLowerCase())
+    paste.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+    paste.content.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
 
   return (
@@ -32,12 +43,12 @@ const Paste = () => {
           }`}
         >
           <label htmlFor="search-pastes" className="absolute w-1 h-1 p-0 -m-1 overflow-hidden clip-rect-0 whitespace-nowrap border-0">
-            Search pastes by title
+            Search pastes by title OR content
           </label>
           <input
             id="search-pastes"
             type="search"
-            placeholder="Search pastes by title..."
+            placeholder="Search pastes by title OR content..."
             className={`focus:outline-none w-full bg-transparent text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 rounded px-2 py-1 ${
               darkmode
                 ? "text-white placeholder-gray-500"
@@ -198,19 +209,19 @@ const Paste = () => {
                     darkmode ? "text-white" : "text-black"
                   }`}
                 >
-                  {searchTerm ? "No results found" : "No notes yet"}
+                  {debouncedSearchTerm ? "No results found" : "No notes yet"}
                 </h3>
                 <p
                   className={`text-sm sm:text-base mb-6 ${
                     darkmode ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
-                  {searchTerm
+                  {debouncedSearchTerm
                     ? "Try a different search term to find your notes"
                     : "Create your first note to get started"}
                 </p>
 
-                {searchTerm ? (
+                {debouncedSearchTerm ? (
                   <button
                     onClick={() => setSearchTerm("")}
                     className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-offset-gray-900"
