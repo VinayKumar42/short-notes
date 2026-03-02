@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "1e45d32c-8a20-4bbe-99f0-427ed377d064",
+    "title": "Coding fest",
+    "content": "I am gonna participate in the coding fest",
+    "createdAt": "2026-02-24T16:40:09.895Z",
+    "updatedAt": "2026-02-24T16:40:09.895Z"
+  },
+  {
+    "_id": "6db73b01-7eba-4770-b511-973ec73b1af1",
+    "title": "Nothing",
+    "content": "THis is going to be fun",
+    "createdAt": "2026-02-24T06:06:29.164Z",
+    "updatedAt": "2026-02-24T06:06:29.164Z"
+  }
+]
