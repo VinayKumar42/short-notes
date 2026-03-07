@@ -8,26 +8,33 @@ import { Copy, PlusCircle } from "lucide-react";
 const Home = () => {
   const [value, setValue] = useState("");
   const [title, setTitle] = useState("");
+  const [textareaRows, setTextareaRows] = useState(20);
   const [searchParams, setSearchParams] = useSearchParams();
+
   const pasteId = searchParams.get("pasteId");
   const pastes = useSelector((state) => state.paste.pastes);
+  const darkmode = useSelector((state) => state.theme.darkmode);
   const dispatch = useDispatch();
 
-  // Load pastes from backend on mount
+  // Responsive textarea rows
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setTextareaRows(10);
+      } else {
+        setTextareaRows(20);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Load pastes from backend
   useEffect(() => {
     dispatch(fetchAllPastes());
   }, [dispatch]);
-
-  // Pre-fill form when editing
-  useEffect(() => {
-    if (pasteId) {
-      const paste = pastes.find((p) => p._id === pasteId);
-      if (paste) {
-        setTitle(paste.title);
-        setValue(paste.content);
-      }
-    }
-  }, [pasteId, pastes]);
 
   const createPaste = () => {
     if (!value.trim()) {
@@ -35,10 +42,16 @@ const Home = () => {
       return;
     }
 
+    const paste = {
+      title,
+      content: value,
+      _id: pasteId,
+    };
+
     if (pasteId) {
-      dispatch(updatePastes({ _id: pasteId, title, content: value }));
+      dispatch(updatePastes(paste));
     } else {
-      dispatch(addToPastes({ title, content: value }));
+      dispatch(addToPastes(paste));
     }
 
     setTitle("");
@@ -52,63 +65,93 @@ const Home = () => {
     setSearchParams({});
   };
 
+  // Prefill when editing
+  useEffect(() => {
+    if (pasteId) {
+      const paste = pastes.find((p) => p._id === pasteId);
+      if (paste) {
+        setTitle(paste.title);
+        setValue(paste.content);
+      }
+    }
+  }, [pasteId, pastes]);
+
   return (
-    <div className="w-full h-full py-10 max-w-[1200px] mx-auto px-5 lg:px-0">
-      <div className="flex flex-col gap-y-5 items-start">
-        <div className="w-full flex flex-row gap-x-4 justify-between items-center">
+    <div className="w-full py-6 sm:py-10 px-4 sm:px-5 max-w-3xl mx-auto">
+      <div className="flex flex-col gap-y-5">
+
+        <div className="w-full flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <input
             type="text"
-            placeholder="Title"
+            placeholder="Enter paste title..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className={`${
-              pasteId ? "w-[80%]" : "w-[85%]"
-            } text-black border border-input rounded-md p-2`}
+            className={`flex-1 border border-gray-300 rounded-md p-2 transition-colors duration-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:placeholder-gray-400 text-sm sm:text-base ${
+              darkmode ? "bg-gray-800 text-white" : "bg-white text-black"
+            }`}
           />
-          <button
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700"
-            onClick={createPaste}
-          >
-            {pasteId ? "Update Paste" : "Create My Paste"}
-          </button>
 
-          {pasteId && (
+          <div className="flex gap-2">
             <button
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700"
-              onClick={resetPaste}
+              className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm"
+              onClick={createPaste}
             >
-              <PlusCircle size={20} />
+              {pasteId ? "Update Paste" : "Create Paste"}
             </button>
-          )}
+
+            {pasteId && (
+              <button
+                className="px-3 py-2.5 text-white bg-blue-700 hover:bg-blue-800 rounded-lg"
+                onClick={resetPaste}
+              >
+                <PlusCircle size={18} />
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="w-full flex flex-col items-start relative rounded bg-opacity-10 border border-[rgba(128,121,121,0.3)] backdrop-blur-2xl">
-          <div className="w-full rounded-t flex items-center justify-between gap-x-4 px-4 py-2 border-b border-[rgba(128,121,121,0.3)]">
-            <div className="w-full flex gap-x-[6px] items-center select-none">
-              <div className="w-[13px] h-[13px] rounded-full bg-[rgb(255,95,87)]" />
-              <div className="w-[13px] h-[13px] rounded-full bg-[rgb(254,188,46)]" />
-              <div className="w-[13px] h-[13px] rounded-full bg-[rgb(45,200,66)]" />
+        <div
+          className={`w-full flex flex-col rounded-lg overflow-hidden border ${
+            darkmode
+              ? "border-gray-700 bg-gray-800"
+              : "border-gray-200 bg-white"
+          }`}
+        >
+          <div
+            className={`w-full flex items-center gap-2 px-4 py-3 border-b ${
+              darkmode
+                ? "border-gray-700 bg-gray-700"
+                : "border-gray-200 bg-gray-50"
+            }`}
+          >
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-400" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
             </div>
-            <div className="w-fit flex items-center gap-x-4 px-4">
-              <button
-                className="flex justify-center items-center transition-all duration-300 ease-in-out group"
-                onClick={() => {
-                  navigator.clipboard.writeText(value);
-                  toast.success("Copied to Clipboard", { position: "top-right" });
-                }}
-              >
-                <Copy className="group-hover:text-green-500" size={20} />
-              </button>
-            </div>
+
+            <div className="flex-1" />
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(value);
+                toast.success("Copied to Clipboard");
+              }}
+              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+            >
+              <Copy size={18} />
+            </button>
           </div>
 
           <textarea
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="Write Your Content Here...."
-            className="w-full p-3 focus-visible:ring-0 text-black"
-            style={{ caretColor: "#000" }}
-            rows={20}
+            placeholder="Write your content here..."
+            className={`w-full p-3 resize-y font-mono text-sm ${
+              darkmode ? "bg-gray-800 text-white" : "bg-white text-black"
+            }`}
+            style={{ caretColor: darkmode ? "#fff" : "#000" }}
+            rows={textareaRows}
           />
         </div>
       </div>

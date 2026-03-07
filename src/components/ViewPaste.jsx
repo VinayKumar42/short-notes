@@ -2,11 +2,14 @@ import { Copy } from "lucide-react";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ViewPaste = () => {
   const { id } = useParams();
+  const darkmode = useSelector((state) => state.theme.darkmode);
   const [paste, setPaste] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [textareaRows, setTextareaRows] = useState(20);
 
   // Fetch the individual paste directly from backend
   useEffect(() => {
@@ -29,6 +32,17 @@ const ViewPaste = () => {
     fetchPaste();
   }, [id]);
 
+  // Update textarea rows based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      setTextareaRows(window.innerWidth < 768 ? 10 : 20);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   if (loading) {
     return (
       <div className="w-full py-20 text-center text-xl text-gray-400">
@@ -39,49 +53,76 @@ const ViewPaste = () => {
 
   if (!paste) {
     return (
-      <div className="w-full py-20 text-center text-xl text-red-400">
-        Paste not found.
+      <div className="w-full h-full py-10 px-4 sm:px-5 max-w-3xl mx-auto flex items-center justify-center">
+        <p className="text-lg sm:text-2xl text-gray-500 dark:text-gray-400">
+          Paste not found
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full py-10 max-w-[1200px] mx-auto px-5 lg:px-0">
-      <div className="flex flex-col gap-y-5 items-start">
+    <div className="w-full py-6 sm:py-10 px-4 sm:px-5 max-w-3xl mx-auto">
+      <div className="flex flex-col gap-y-5">
+        {/* Title Input */}
         <input
           type="text"
           placeholder="Title"
           value={paste.title}
           disabled
-          className="w-full text-black border border-input rounded-md p-2"
+          className={`border border-gray-300 rounded-md p-2 transition-colors duration-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:placeholder-gray-400 disabled:opacity-70 disabled:cursor-not-allowed text-sm sm:text-base ${
+            darkmode ? "bg-gray-800 text-white" : "bg-white text-black"
+          }`}
         />
-        <div className="w-full flex flex-col items-start relative rounded bg-opacity-10 border border-[rgba(128,121,121,0.3)] backdrop-blur-2xl">
-          <div className="w-full rounded-t flex items-center justify-between gap-x-4 px-4 py-2 border-b border-[rgba(128,121,121,0.3)]">
-            <div className="w-full flex gap-x-[6px] items-center select-none">
-              <div className="w-[13px] h-[13px] rounded-full bg-[rgb(255,95,87)]" />
-              <div className="w-[13px] h-[13px] rounded-full bg-[rgb(254,188,46)]" />
-              <div className="w-[13px] h-[13px] rounded-full bg-[rgb(45,200,66)]" />
+
+        {/* Viewer Container */}
+        <div
+          className={`w-full flex flex-col rounded-lg overflow-hidden border transition-colors duration-200 ${
+            darkmode
+              ? "border-gray-700 bg-gray-800"
+              : "border-gray-200 bg-white"
+          }`}
+        >
+          {/* Decorative Header (macOS-style window controls) */}
+          <div
+            className={`w-full flex items-center gap-2 px-4 py-3 border-b transition-colors duration-200 ${
+              darkmode
+                ? "border-gray-700 bg-gray-700"
+                : "border-gray-200 bg-gray-50"
+            }`}
+          >
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-400" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
             </div>
-            <div className="w-fit flex items-center gap-x-4 px-4">
-              <button
-                className="flex justify-center items-center transition-all duration-300 ease-in-out group"
-                onClick={() => {
-                  navigator.clipboard.writeText(paste.content);
-                  toast.success("Copied to Clipboard");
-                }}
-              >
-                <Copy className="group-hover:text-green-500" size={20} />
-              </button>
-            </div>
+            <div className="flex-1" />
+            {/* Copy Button */}
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(paste.content);
+                toast.success("Copied to Clipboard");
+              }}
+              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 group"
+              aria-label="Copy to clipboard"
+            >
+              <Copy
+                size={18}
+                className="text-gray-600 dark:text-gray-400 group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors duration-200"
+              />
+            </button>
           </div>
 
+          {/* Textarea */}
           <textarea
             value={paste.content}
             disabled
-            placeholder="Write Your Content Here...."
-            className="w-full p-3 focus-visible:ring-0"
-            style={{ caretColor: "#000" }}
-            rows={20}
+            placeholder="No content"
+            className={`w-full p-3 focus-visible:ring-0 transition-colors duration-200 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 disabled:opacity-70 disabled:cursor-not-allowed resize-y font-mono text-sm ${
+              darkmode ? "bg-gray-800 text-white" : "bg-white text-black"
+            }`}
+            style={{ caretColor: darkmode ? "#fff" : "#000" }}
+            rows={textareaRows}
           />
         </div>
       </div>

@@ -1,17 +1,18 @@
-import { Calendar, Copy, Eye, PencilLine, Trash2, Share2 } from "lucide-react";
+import { Calendar, Copy, Eye, PencilLine, Trash2, Share2, StickyNote } from "lucide-react";
 import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { removeFromPastes, fetchAllPastes } from "../redux/pasteSlice";
 import { FormatDate } from "../utlis/formatDate";
 
 const Paste = () => {
   const pastes = useSelector((state) => state.paste.pastes);
   const loading = useSelector((state) => state.paste.loading);
+  const darkmode = useSelector((state) => state.theme.darkmode);
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch pastes from backend on mount
   useEffect(() => {
     dispatch(fetchAllPastes());
   }, [dispatch]);
@@ -25,101 +26,182 @@ const Paste = () => {
   );
 
   return (
-    <div className="w-full h-full py-10 max-w-[1200px] mx-auto px-5 lg:px-0">
-      <div className="flex flex-col gap-y-3">
-        {/* Search */}
-        <div className="w-full flex gap-3 px-4 py-2 rounded-[0.3rem] border border-[rgba(128,121,121,0.3)] mt-6">
+    <div className="w-full py-6 sm:py-10 px-4 sm:px-5 max-w-3xl mx-auto">
+      <div className="flex flex-col gap-y-5">
+        {/* Search Input */}
+        <div
+          className={`w-full flex gap-3 px-4 py-3 rounded-lg border transition-all duration-200 ${
+            darkmode
+              ? "bg-gray-800 border-gray-700 hover:border-gray-600"
+              : "bg-white border-gray-200 hover:border-gray-300"
+          }`}
+        >
+          <label htmlFor="search-pastes" className="absolute w-1 h-1 p-0 -m-1 overflow-hidden clip-rect-0 whitespace-nowrap border-0">
+            Search pastes by title
+          </label>
           <input
+            id="search-pastes"
             type="search"
-            placeholder="Search paste here..."
-            className="focus:outline-none w-full bg-transparent transition-all duration-200 hover:bg-black hover:shadow-lg hover:border hover:border-gray-500 text-white px-3 py-2 rounded-[0.3rem]"
+            placeholder="Search pastes by title..."
+            className={`focus:outline-none w-full bg-transparent text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 rounded px-2 py-1 ${
+              darkmode
+                ? "text-white placeholder-gray-500"
+                : "text-black placeholder-gray-400"
+            }`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        {/* All Pastes */}
-        <div className="flex flex-col border border-[rgba(128,121,121,0.3)] py-4 rounded-[0.4rem]">
-          <h2 className="px-4 text-4xl font-bold border-b border-[rgba(128,121,121,0.3)] pb-4">
+        {/* All Pastes Section */}
+        <div
+          className={`flex flex-col border rounded-lg overflow-hidden transition-colors duration-200 ${
+            darkmode ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
+          }`}
+        >
+          <h2
+            className={`px-4 sm:px-6 py-4 text-2xl sm:text-3xl md:text-4xl font-bold border-b transition-colors duration-200 ${
+              darkmode ? "border-gray-700 bg-gray-700" : "border-gray-200 bg-gray-50"
+            }`}
+          >
             All Pastes
           </h2>
 
-          <div className="w-full px-4 pt-4 flex flex-col gap-y-5">
+          <div className="w-full px-4 sm:px-6 py-4 sm:py-6 flex flex-col gap-y-4 sm:gap-y-6" role="list" aria-live="polite" aria-atomic="true">
             {loading ? (
               <div className="text-2xl text-center w-full text-gray-400">Loading...</div>
             ) : filteredPastes.length > 0 ? (
               filteredPastes.map((paste) => (
                 <div
                   key={paste?._id}
-                  className="border border-[rgba(128,121,121,0.3)] w-full gap-y-6 justify-between flex flex-col sm:flex-row p-4 rounded-[0.3rem]"
+                  role="listitem"
+                  className={`border rounded-lg p-4 sm:p-6 transition-all duration-200 ${
+                    darkmode
+                      ? "border-gray-700 hover:border-gray-600 bg-gray-800"
+                      : "border-gray-200 hover:border-gray-300 bg-gray-50"
+                  }`}
                 >
-                  {/* Title and Content */}
-                  <div className="w-[50%] flex flex-col space-y-3">
-                    <p className="text-4xl font-semibold">{paste?.title}</p>
-                    <p className="text-sm font-normal line-clamp-3 max-w-[80%] text-[#707070]">
-                      {paste?.content}
-                    </p>
-                  </div>
-
-                  {/* Action Icons */}
-                  <div className="flex flex-col gap-y-4 sm:items-end">
-                    <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-                      {/* Edit */}
-                      <button className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7] hover:bg-transparent group hover:border-blue-500">
-                        <a href={`/?pasteId=${paste?._id}`}>
-                          <PencilLine className="text-black group-hover:text-blue-500" size={20} />
-                        </a>
-                      </button>
-
-                      {/* Delete */}
-                      <button
-                        className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7] hover:bg-transparent group hover:border-pink-500"
-                        onClick={() => handleDelete(paste?._id)}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    {/* Left: Title & Content Preview */}
+                    <div className="flex flex-col gap-3">
+                      <h3
+                        className={`text-xl sm:text-2xl md:text-3xl font-bold line-clamp-2 ${
+                          darkmode ? "text-white" : "text-black"
+                        }`}
                       >
-                        <Trash2 className="text-black group-hover:text-pink-500" size={20} />
-                      </button>
+                        {paste?.title}
+                      </h3>
+                      <p className="text-sm sm:text-base line-clamp-3 text-gray-500 dark:text-gray-400">
+                        {paste?.content}
+                      </p>
+                      {/* Date - Mobile Only */}
+                      <div className="flex items-center gap-2 md:hidden text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        <Calendar size={16} />
+                        <span>{FormatDate(paste?.createdAt)}</span>
+                      </div>
+                    </div>
 
-                      {/* View */}
-                      <button className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7] hover:bg-transparent group hover:border-orange-500">
-                        <a href={`/pastes/${paste?._id}`} target="_blank">
-                          <Eye className="text-black group-hover:text-orange-500" size={20} />
+                    {/* Right: Action Buttons */}
+                    <div className="flex flex-col gap-3 md:items-end md:justify-between">
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
+                        {/* Edit */}
+                        
+                          href={`/?pasteId=${paste?._id}`}
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
+                          title="Edit paste"
+                          aria-label="Edit paste"
+                        >
+                          <PencilLine className="text-black dark:text-white group-hover:text-blue-500 transition-colors duration-200" size={18} />
                         </a>
-                      </button>
 
-                      {/* Copy */}
-                      <button
-                        className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7] hover:bg-transparent group hover:border-green-500"
-                        onClick={() => {
-                          navigator.clipboard.writeText(paste?.content);
-                          toast.success("Copied to Clipboard");
-                        }}
-                      >
-                        <Copy className="text-black group-hover:text-green-500" size={20} />
-                      </button>
+                        {/* Delete */}
+                        <button
+                          onClick={() => handleDelete(paste?._id)}
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
+                          title="Delete paste"
+                          aria-label="Delete paste"
+                        >
+                          <Trash2 className="text-black dark:text-white group-hover:text-red-500 transition-colors duration-200" size={18} />
+                        </button>
 
-                      {/* Share */}
-                      <button className="p-2 rounded-[0.2rem] bg-white border border-[#c7c7c7] hover:bg-transparent group hover:border-purple-500">
-                        <a
+                        {/* View */}
+                        
+                          href={`/pastes/${paste?._id}`}
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
+                          title="View paste"
+                          aria-label="View paste"
+                        >
+                          <Eye className="text-black dark:text-white group-hover:text-orange-500 transition-colors duration-200" size={18} />
+                        </a>
+
+                        {/* Copy */}
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(paste?.content);
+                            toast.success("Copied to Clipboard");
+                          }}
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
+                          title="Copy to clipboard"
+                          aria-label="Copy to clipboard"
+                        >
+                          <Copy className="text-black dark:text-white group-hover:text-green-500 transition-colors duration-200" size={18} />
+                        </button>
+
+                        {/* Share */}
+                        
                           href={`https://wa.me/?text=${encodeURIComponent(
                             `Check out this paste: ${paste?.title}\n\n${paste?.content}`
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
+                          title="Share on WhatsApp"
+                          aria-label="Share on WhatsApp"
                         >
-                          <Share2 className="text-black group-hover:text-purple-500" size={20} />
+                          <Share2 className="text-black dark:text-white group-hover:text-purple-500 transition-colors duration-200" size={18} />
                         </a>
-                      </button>
-                    </div>
+                      </div>
 
-                    <div className="gap-x-2 flex items-center">
-                      <Calendar className="text-black" size={20} />
-                      <span>{FormatDate(paste?.createdAt)}</span>
+                      {/* Date - Desktop Only */}
+                      <div className="hidden md:flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        <Calendar size={16} />
+                        <span>{FormatDate(paste?.createdAt)}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-2xl text-center w-full">No Data Found</div>
+              <div
+                className={`text-center py-16 px-4 border-t transition-colors duration-200 ${
+                  darkmode ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
+                }`}
+              >
+                <StickyNote size={48} className="mx-auto mb-4 text-gray-400 dark:text-gray-600" />
+                <h3 className={`text-2xl sm:text-3xl font-bold mb-2 ${darkmode ? "text-white" : "text-black"}`}>
+                  {searchTerm ? "No results found" : "No notes yet"}
+                </h3>
+                <p className={`text-sm sm:text-base mb-6 ${darkmode ? "text-gray-400" : "text-gray-600"}`}>
+                  {searchTerm
+                    ? "Try a different search term to find your notes"
+                    : "Create your first note to get started"}
+                </p>
+                {searchTerm ? (
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200"
+                  >
+                    Clear Search
+                  </button>
+                ) : (
+                  <NavLink
+                    to="/"
+                    className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 inline-block"
+                  >
+                    + Create a Note
+                  </NavLink>
+                )}
+              </div>
             )}
           </div>
         </div>
