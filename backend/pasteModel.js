@@ -1,13 +1,19 @@
-const { v4: uuidv4 } = require("uuid");
+const mongoose = require("mongoose");
 
-const createPaste = (title, content) => {
-  return {
-    _id: uuidv4(),        // _id matches what the frontend uses
-    title: title || "Untitled",
-    content,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-};
+const pasteSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      default: "Untitled",
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true, // auto adds createdAt and updatedAt
+  }
+);
 
-module.exports = { createPaste };
+module.exports = mongoose.model("Paste", pasteSchema);

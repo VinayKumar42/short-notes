@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { removeFromPastes, fetchAllPastes } from "../redux/pasteSlice";
-import { FormatDate } from "../utlis/formatDate";
+import { FormatDate } from "../utils/formatDate"; // ✅ Fix #1: was "../utlis/formatDate"
 
 const Paste = () => {
   const pastes = useSelector((state) => state.paste.pastes);
@@ -36,7 +36,10 @@ const Paste = () => {
               : "bg-white border-gray-200 hover:border-gray-300"
           }`}
         >
-          <label htmlFor="search-pastes" className="absolute w-1 h-1 p-0 -m-1 overflow-hidden clip-rect-0 whitespace-nowrap border-0">
+          <label
+            htmlFor="search-pastes"
+            className="absolute w-1 h-1 p-0 -m-1 overflow-hidden whitespace-nowrap border-0"
+          >
             Search pastes by title
           </label>
           <input
@@ -67,7 +70,12 @@ const Paste = () => {
             All Pastes
           </h2>
 
-          <div className="w-full px-4 sm:px-6 py-4 sm:py-6 flex flex-col gap-y-4 sm:gap-y-6" role="list" aria-live="polite" aria-atomic="true">
+          <div
+            className="w-full px-4 sm:px-6 py-4 sm:py-6 flex flex-col gap-y-4 sm:gap-y-6"
+            role="list"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {loading ? (
               <div className="text-2xl text-center w-full text-gray-400">Loading...</div>
             ) : filteredPastes.length > 0 ? (
@@ -104,15 +112,20 @@ const Paste = () => {
                     {/* Right: Action Buttons */}
                     <div className="flex flex-col gap-3 md:items-end md:justify-between">
                       <div className="flex flex-wrap gap-2 sm:gap-3">
+
+                        {/* ✅ Fix #2: was plain <a href> causing full reload, now NavLink */}
                         {/* Edit */}
-                        
-                          href={`/?pasteId=${paste?._id}`}
+                        <NavLink
+                          to={`/?pasteId=${paste?._id}`}
                           className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
                           title="Edit paste"
                           aria-label="Edit paste"
                         >
-                          <PencilLine className="text-black dark:text-white group-hover:text-blue-500 transition-colors duration-200" size={18} />
-                        </a>
+                          <PencilLine
+                            className="text-black dark:text-white group-hover:text-blue-500 transition-colors duration-200"
+                            size={18}
+                          />
+                        </NavLink>
 
                         {/* Delete */}
                         <button
@@ -121,18 +134,25 @@ const Paste = () => {
                           title="Delete paste"
                           aria-label="Delete paste"
                         >
-                          <Trash2 className="text-black dark:text-white group-hover:text-red-500 transition-colors duration-200" size={18} />
+                          <Trash2
+                            className="text-black dark:text-white group-hover:text-red-500 transition-colors duration-200"
+                            size={18}
+                          />
                         </button>
 
+                        {/* ✅ Fix #3: was plain <a href>, now NavLink */}
                         {/* View */}
-                        
-                          href={`/pastes/${paste?._id}`}
+                        <NavLink
+                          to={`/pastes/${paste?._id}`}
                           className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
                           title="View paste"
                           aria-label="View paste"
                         >
-                          <Eye className="text-black dark:text-white group-hover:text-orange-500 transition-colors duration-200" size={18} />
-                        </a>
+                          <Eye
+                            className="text-black dark:text-white group-hover:text-orange-500 transition-colors duration-200"
+                            size={18}
+                          />
+                        </NavLink>
 
                         {/* Copy */}
                         <button
@@ -144,11 +164,15 @@ const Paste = () => {
                           title="Copy to clipboard"
                           aria-label="Copy to clipboard"
                         >
-                          <Copy className="text-black dark:text-white group-hover:text-green-500 transition-colors duration-200" size={18} />
+                          <Copy
+                            className="text-black dark:text-white group-hover:text-green-500 transition-colors duration-200"
+                            size={18}
+                          />
                         </button>
 
-                        {/* Share */}
-                        
+                        {/* ✅ Fix #4: was missing opening <a tag entirely — now a proper anchor */}
+                        {/* Share (WhatsApp — external link, plain <a> is correct here) */}
+                        <a
                           href={`https://wa.me/?text=${encodeURIComponent(
                             `Check out this paste: ${paste?.title}\n\n${paste?.content}`
                           )}`}
@@ -158,7 +182,10 @@ const Paste = () => {
                           title="Share on WhatsApp"
                           aria-label="Share on WhatsApp"
                         >
-                          <Share2 className="text-black dark:text-white group-hover:text-purple-500 transition-colors duration-200" size={18} />
+                          <Share2
+                            className="text-black dark:text-white group-hover:text-purple-500 transition-colors duration-200"
+                            size={18}
+                          />
                         </a>
                       </div>
 
@@ -177,11 +204,22 @@ const Paste = () => {
                   darkmode ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
                 }`}
               >
-                <StickyNote size={48} className="mx-auto mb-4 text-gray-400 dark:text-gray-600" />
-                <h3 className={`text-2xl sm:text-3xl font-bold mb-2 ${darkmode ? "text-white" : "text-black"}`}>
+                <StickyNote
+                  size={48}
+                  className="mx-auto mb-4 text-gray-400 dark:text-gray-600"
+                />
+                <h3
+                  className={`text-2xl sm:text-3xl font-bold mb-2 ${
+                    darkmode ? "text-white" : "text-black"
+                  }`}
+                >
                   {searchTerm ? "No results found" : "No notes yet"}
                 </h3>
-                <p className={`text-sm sm:text-base mb-6 ${darkmode ? "text-gray-400" : "text-gray-600"}`}>
+                <p
+                  className={`text-sm sm:text-base mb-6 ${
+                    darkmode ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
                   {searchTerm
                     ? "Try a different search term to find your notes"
                     : "Create your first note to get started"}

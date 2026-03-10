@@ -1,33 +1,8 @@
-const fs = require("fs");
-const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { createUser } = require("./userModel");
+const User = require("./userModel");
 
-const USERS_PATH = path.join(__dirname, "users.json");
 const JWT_SECRET = process.env.JWT_SECRET || "your_super_secret_key_change_in_production";
-
-const readUsers = () => {
-  try {
-    if (!fs.existsSync(USERS_PATH)) {
-      fs.writeFileSync(USERS_PATH, JSON.stringify([]));
-      return [];
-    }
-    const content = fs.readFileSync(USERS_PATH, "utf-8");
-    return content ? JSON.parse(content) : [];
-  } catch (err) {
-    console.error("Failed to read users:", err);
-    return [];
-  }
-};
-
-const writeUsers = (data) => {
-  try {
-    fs.writeFileSync(USERS_PATH, JSON.stringify(data, null, 2));
-  } catch (err) {
-    console.error("Failed to write users:", err);
-  }
-};
 
 const signup = async (req, res) => {
   try {
@@ -35,15 +10,12 @@ const signup = async (req, res) => {
     if (!name || !email || !password)
       return res.status(400).json({ success: false, message: "All fields are required." });
 
-    const users = readUsers();
-    const existingUser = users.find((u) => u.email === email);
+    const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(409).json({ success: false, message: "Email already registered." });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = createUser(name, email, hashedPassword);
-    users.push(newUser);
-    writeUsers(users);
+    const newUser = await User.create({ name, email, password: hashedPassword });
 
     const token = jwt.sign({ id: newUser._id, email: newUser.email }, JWT_SECRET, { expiresIn: "7d" });
 
@@ -65,8 +37,7 @@ const login = async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ success: false, message: "Email and password are required." });
 
-    const users = readUsers();
-    const user = users.find((u) => u.email === email);
+    const user = await User.findOne({ email });
     if (!user)
       return res.status(401).json({ success: false, message: "Invalid email or password." });
 
@@ -88,11 +59,15 @@ const login = async (req, res) => {
   }
 };
 
-const getMe = (req, res) => {
-  const users = readUsers();
-  const user = users.find((u) => u._id === req.user.id);
-  if (!user) return res.status(404).json({ success: false, message: "User not found." });
-  res.json({ success: true, user: { _id: user._id, name: user.name, email: user.email } });
+const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ success: false, message: "User not found." });
+    res.json({ success: true, user: { _id: user._id, name: user.name, email: user.email } });
+  } catch (err) {
+    console.error("GetMe error:", err);
+    res.status(500).json({ success: false, message: "Failed to get user." });
+  }
 };
 
 module.exports = { signup, login, getMe };

@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { PASTE_URL } from "../config";
 
 const ViewPaste = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const ViewPaste = () => {
   useEffect(() => {
     const fetchPaste = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/pastes/${id}`);
+        const res = await fetch(`${PASTE_URL}/${id}`);
         const data = await res.json();
         if (data.success) {
           setPaste(data.paste);

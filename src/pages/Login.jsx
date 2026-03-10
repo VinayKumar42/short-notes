@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/authSlice";
 import { Eye, EyeOff, LogIn } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,47 +12,73 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.auth);
+  const darkmode = useSelector((state) => state.theme.darkmode); // ✅ reads theme from Redux
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(loginUser({ email, password }));
-    if (loginUser.fulfilled.match(result)) {
-      navigate("/");
+    if (!email || !password) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+    try {
+      const result = await dispatch(loginUser({ email, password }));
+      if (loginUser.fulfilled.match(result)) {
+        navigate("/");
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition px-4">
+    <div className={`min-h-screen flex items-center justify-center transition-colors duration-200 px-4 ${
+      darkmode ? "bg-gray-900" : "bg-gray-100"
+    }`}>
       <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+        <div className={`rounded-2xl shadow-2xl p-8 border transition-colors duration-200 ${
+          darkmode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+        }`}>
+
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-600 mb-4">
               <LogIn size={28} className="text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Welcome back</h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">Sign in to your account</p>
+            <h1 className={`text-3xl font-bold ${darkmode ? "text-white" : "text-gray-800"}`}>
+              Welcome back
+            </h1>
+            <p className={`mt-2 text-sm ${darkmode ? "text-gray-400" : "text-gray-500"}`}>
+              Sign in to your account
+            </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-y-5">
+
             {/* Email */}
             <div className="flex flex-col gap-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+              <label className={`text-sm font-medium ${darkmode ? "text-gray-300" : "text-gray-700"}`}>
+                Email
+              </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-black dark:text-white rounded-lg px-4 py-2.5 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition"
+                className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition ${
+                  darkmode
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                    : "bg-white border-gray-300 text-black placeholder-gray-400"
+                }`}
               />
             </div>
 
             {/* Password */}
             <div className="flex flex-col gap-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+              <label className={`text-sm font-medium ${darkmode ? "text-gray-300" : "text-gray-700"}`}>
+                Password
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -59,12 +86,18 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-black dark:text-white rounded-lg px-4 py-2.5 pr-10 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition"
+                  className={`w-full border rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition ${
+                    darkmode
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                      : "bg-white border-gray-300 text-black placeholder-gray-400"
+                  }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition"
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 transition ${
+                    darkmode ? "text-gray-400 hover:text-gray-200" : "text-gray-400 hover:text-gray-600"
+                  }`}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -83,9 +116,9 @@ const Login = () => {
           </form>
 
           {/* Footer */}
-          <p className="text-center text-gray-600 dark:text-gray-400 text-sm mt-6">
+          <p className={`text-center text-sm mt-6 ${darkmode ? "text-gray-400" : "text-gray-600"}`}>
             Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-medium transition">
+            <Link to="/signup" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 font-medium transition">
               Sign up
             </Link>
           </p>

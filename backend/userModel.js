@@ -1,13 +1,27 @@
-const { v4: uuidv4 } = require("uuid");
+const mongoose = require("mongoose");
 
-const createUser = (name, email, password) => {
-  return {
-    _id: uuidv4(),
-    name,
-    email,
-    password, // hashed before storing
-    createdAt: new Date().toISOString(),
-  };
-};
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true, // auto adds createdAt and updatedAt
+  }
+);
 
-module.exports = { createUser };
+module.exports = mongoose.model("User", userSchema);
