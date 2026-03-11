@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { removeFromPastes, fetchAllPastes } from "../redux/pasteSlice";
-import { FormatDate } from "../utils/formatDate"; // ✅ Fix #1: was "../utlis/formatDate"
+import { FormatDate } from "../utils/formatDate";
 
 const Paste = () => {
   const pastes = useSelector((state) => state.paste.pastes);
@@ -12,6 +12,7 @@ const Paste = () => {
   const darkmode = useSelector((state) => state.theme.darkmode);
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   useEffect(() => {
     dispatch(fetchAllPastes());
@@ -21,8 +22,18 @@ const Paste = () => {
     dispatch(removeFromPastes(id));
   };
 
+  // Debounce search with useEffect and setTimeout
+  useEffect(() => {
+    const delayTimer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(delayTimer);
+  }, [searchTerm]);
+
   const filteredPastes = pastes.filter((paste) =>
-    paste.title.toLowerCase().includes(searchTerm.toLowerCase())
+    paste.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+    paste.content.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
   );
 
   return (
@@ -36,16 +47,13 @@ const Paste = () => {
               : "bg-white border-gray-200 hover:border-gray-300"
           }`}
         >
-          <label
-            htmlFor="search-pastes"
-            className="absolute w-1 h-1 p-0 -m-1 overflow-hidden whitespace-nowrap border-0"
-          >
-            Search pastes by title
+          <label htmlFor="search-pastes" className="absolute w-1 h-1 p-0 -m-1 overflow-hidden clip-rect-0 whitespace-nowrap border-0">
+            Search pastes by title OR content
           </label>
           <input
             id="search-pastes"
             type="search"
-            placeholder="Search pastes by title..."
+            placeholder="Search pastes by title OR content..."
             className={`focus:outline-none w-full bg-transparent text-sm sm:text-base transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 rounded px-2 py-1 ${
               darkmode
                 ? "text-white placeholder-gray-500"
@@ -113,7 +121,6 @@ const Paste = () => {
                     <div className="flex flex-col gap-3 md:items-end md:justify-between">
                       <div className="flex flex-wrap gap-2 sm:gap-3">
 
-                        {/* ✅ Fix #2: was plain <a href> causing full reload, now NavLink */}
                         {/* Edit */}
                         <NavLink
                           to={`/?pasteId=${paste?._id}`}
@@ -140,7 +147,6 @@ const Paste = () => {
                           />
                         </button>
 
-                        {/* ✅ Fix #3: was plain <a href>, now NavLink */}
                         {/* View */}
                         <NavLink
                           to={`/pastes/${paste?._id}`}
@@ -170,8 +176,7 @@ const Paste = () => {
                           />
                         </button>
 
-                        {/* ✅ Fix #4: was missing opening <a tag entirely — now a proper anchor */}
-                        {/* Share (WhatsApp — external link, plain <a> is correct here) */}
+                        {/* Share (WhatsApp) */}
                         <a
                           href={`https://wa.me/?text=${encodeURIComponent(
                             `Check out this paste: ${paste?.title}\n\n${paste?.content}`
@@ -213,18 +218,19 @@ const Paste = () => {
                     darkmode ? "text-white" : "text-black"
                   }`}
                 >
-                  {searchTerm ? "No results found" : "No notes yet"}
+                  {debouncedSearchTerm ? "No results found" : "No notes yet"}
                 </h3>
                 <p
                   className={`text-sm sm:text-base mb-6 ${
                     darkmode ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
-                  {searchTerm
+                  {debouncedSearchTerm
                     ? "Try a different search term to find your notes"
                     : "Create your first note to get started"}
                 </p>
-                {searchTerm ? (
+
+                {debouncedSearchTerm ? (
                   <button
                     onClick={() => setSearchTerm("")}
                     className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200"
