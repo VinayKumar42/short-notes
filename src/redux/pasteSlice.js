@@ -1,70 +1,128 @@
-import { createSlice } from "@reduxjs/toolkit"
-import { toast } from "react-hot-toast"
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
+import { PASTE_URL } from "../config";
 
-const initialState = {
-  pastes: localStorage.getItem("pastes")
-    ? JSON.parse(localStorage.getItem("pastes"))
-    : []
-}
+const BASE_URL = PASTE_URL;
+
+// ── Async Thunks (API calls to backend) ──────────────────────────────────────
+
+export const fetchAllPastes = createAsyncThunk(
+  "paste/fetchAll",
+  async (_, thunkAPI) => {
+    try {
+      const res = await fetch(BASE_URL);
+      const data = await res.json();
+      return data.pastes;
+    } catch {
+      return thunkAPI.rejectWithValue("Failed to fetch pastes.");
+    }
+  }
+);
+
+export const addToPastes = createAsyncThunk(
+  "paste/add",
+  async ({ title, content }, thunkAPI) => {
+    try {
+      const res = await fetch(BASE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+      return data.paste;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const updatePastes = createAsyncThunk(
+  "paste/update",
+  async ({ _id, title, content }, thunkAPI) => {
+    try {
+      const res = await fetch(`${BASE_URL}/${_id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+      return data.paste;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const removeFromPastes = createAsyncThunk(
+  "paste/remove",
+  async (id, thunkAPI) => {
+    try {
+      const res = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+      return id;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+// ── Slice ─────────────────────────────────────────────────────────────────────
 
 const pasteSlice = createSlice({
   name: "paste",
-  initialState,
-  reducers: {
-    addToPastes: (state, action) => {
-      const paste = action.payload
-      const index = state.pastes.findIndex((item) => item._id === paste._id)
-
-      if (index >= 0) {
-        // If the course is already in the Pastes, do not modify the quantity
-        toast.error("Paste already exist")
-        return
-      }
-      // If the course is not in the Pastes, add it to the Pastes
-      state.pastes.push(paste)
-      
-      // Update to localstorage
-      localStorage.setItem("pastes", JSON.stringify(state.pastes))
-      // show toast
-      toast.success("Paste added")
-    },
-
-    updatePastes: (state, action) => {
-      const paste = action.payload
-      const index = state.pastes.findIndex((item) => item._id === paste._id)
-
-      if (index >= 0) {
-        // If the course is found in the Pastes, update it
-        state.pastes[index] = paste
-        // Update to localstorage
-        localStorage.setItem("pastes", JSON.stringify(state.pastes))
-        // show toast
-        toast.success("Paste updated")
-      }
-    },
-    removeFromPastes: (state, action) => {
-      const pasteId = action.payload
-
-      console.log(pasteId)
-      const index = state.pastes.findIndex((item) => item._id === pasteId)
-
-      if (index >= 0) {
-        // If the course is found in the Pastes, remove it
-        state.pastes.splice(index, 1)
-        // Update to localstorage
-        localStorage.setItem("pastes", JSON.stringify(state.pastes))
-        // show toast
-        toast.success("Paste deleted")
-      }
-    },
-    resetPaste: (state) => {
-      state.pastes = []
-      // Update to localstorage
-      localStorage.removeItem("pastes")
-    },
+  initialState: {
+    pastes: [],
+    loading: false,
+    error: null,
   },
-})
+  reducers: {},
+  extraReducers: (builder) => {
+    // Fetch All
+    builder
+      .addCase(fetchAllPastes.pending, (state) => { state.loading = true; })
+      .addCase(fetchAllPastes.fulfilled, (state, action) => {
+        state.loading = false;
+        state.pastes = action.payload;
+      })
+      .addCase(fetchAllPastes.rejected, (state, action) => {
+        state.loading = false;
+        toast.error(action.payload || "Failed to load pastes.");
+      });
 
-export const { addToPastes, removeFromPastes, updatePastes } = pasteSlice.actions
+    // Add
+    builder
+      .addCase(addToPastes.fulfilled, (state, action) => {
+        state.pastes.unshift(action.payload);
+        toast.success("Paste added");
+      })
+      .addCase(addToPastes.rejected, (_, action) => {
+        toast.error(action.payload || "Failed to create paste.");
+      });
 
-export default pasteSlice.reducer
+    // Update
+    builder
+      .addCase(updatePastes.fulfilled, (state, action) => {
+        const idx = state.pastes.findIndex((p) => p._id === action.payload._id);
+        if (idx !== -1) state.pastes[idx] = action.payload;
+        toast.success("Paste updated");
+      })
+      .addCase(updatePastes.rejected, (_, action) => {
+        toast.error(action.payload || "Failed to update paste.");
+      });
+
+    // Remove
+    builder
+      .addCase(removeFromPastes.fulfilled, (state, action) => {
+        state.pastes = state.pastes.filter((p) => p._id !== action.payload);
+        toast.success("Paste deleted");
+      })
+      .addCase(removeFromPastes.rejected, (_, action) => {
+        toast.error(action.payload || "Failed to delete paste.");
+      });
+  },
+});
+
+export default pasteSlice.reducer;

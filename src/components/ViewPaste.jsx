@@ -1,31 +1,56 @@
 import { Copy } from "lucide-react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { PASTE_URL } from "../config";
 
 const ViewPaste = () => {
   const { id } = useParams();
-  const pastes = useSelector((state) => state.paste.pastes);
   const darkmode = useSelector((state) => state.theme.darkmode);
+  const [paste, setPaste] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [textareaRows, setTextareaRows] = useState(20);
 
-  const paste = pastes.filter((paste) => paste._id === id)[0];
+  // Fetch the individual paste directly from backend
+  useEffect(() => {
+    const fetchPaste = async () => {
+      try {
+        const res = await fetch(`${PASTE_URL}/${id}`);
+        const data = await res.json();
+        if (data.success) {
+          setPaste(data.paste);
+        } else {
+          toast.error("Paste not found.");
+        }
+      } catch {
+        toast.error("Failed to load paste.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPaste();
+  }, [id]);
 
   // Update textarea rows based on screen size
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setTextareaRows(10);
-      } else {
-        setTextareaRows(20);
-      }
+      setTextareaRows(window.innerWidth < 768 ? 10 : 20);
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full py-20 text-center text-xl text-gray-400">
+        Loading...
+      </div>
+    );
+  }
 
   if (!paste) {
     return (
@@ -94,7 +119,7 @@ const ViewPaste = () => {
             value={paste.content}
             disabled
             placeholder="No content"
-            className={`w-full p-3 bg-white text-black focus-visible:ring-0 transition-colors duration-200 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 disabled:opacity-70 disabled:cursor-not-allowed resize-y font-mono text-sm ${
+            className={`w-full p-3 focus-visible:ring-0 transition-colors duration-200 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 disabled:opacity-70 disabled:cursor-not-allowed resize-y font-mono text-sm ${
               darkmode ? "bg-gray-800 text-white" : "bg-white text-black"
             }`}
             style={{ caretColor: darkmode ? "#fff" : "#000" }}

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/authSlice";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { signupUser } from "../redux/authSlice";
+import { Eye, EyeOff, UserPlus } from "lucide-react";
 import toast from "react-hot-toast";
 
-const Login = () => {
+const Signup = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -16,13 +17,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error("Please fill in all fields.");
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
       return;
     }
     try {
-      const result = await dispatch(loginUser({ email, password }));
-      if (loginUser.fulfilled.match(result)) {
+      const result = await dispatch(signupUser({ name, email, password }));
+      if (signupUser.fulfilled.match(result)) {
         navigate("/");
       }
     } catch {
@@ -42,18 +43,37 @@ const Login = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-600 mb-4">
-              <LogIn size={28} className="text-white" />
+              <UserPlus size={28} className="text-white" />
             </div>
             <h1 className={`text-3xl font-bold ${darkmode ? "text-white" : "text-gray-800"}`}>
-              Welcome back
+              Create account
             </h1>
             <p className={`mt-2 text-sm ${darkmode ? "text-gray-400" : "text-gray-500"}`}>
-              Sign in to your account
+              Join and start sharing pastes
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-y-5">
+
+            {/* Name */}
+            <div className="flex flex-col gap-y-1.5">
+              <label className={`text-sm font-medium ${darkmode ? "text-gray-300" : "text-gray-700"}`}>
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                required
+                className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition ${
+                  darkmode
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                    : "bg-white border-gray-300 text-black placeholder-gray-400"
+                }`}
+              />
+            </div>
 
             {/* Email */}
             <div className="flex flex-col gap-y-1.5">
@@ -66,7 +86,7 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition ${
+                className={`w-full border rounded-lg px-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition ${
                   darkmode
                     ? "bg-gray-700 border-gray-600 text-white placeholder-gray-500"
                     : "bg-white border-gray-300 text-black placeholder-gray-400"
@@ -84,9 +104,10 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Min. 6 characters"
                   required
-                  className={`w-full border rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition ${
+                  minLength={6}
+                  className={`w-full border rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition ${
                     darkmode
                       ? "bg-gray-700 border-gray-600 text-white placeholder-gray-500"
                       : "bg-white border-gray-300 text-black placeholder-gray-400"
@@ -111,15 +132,15 @@ const Login = () => {
               disabled={loading}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg transition duration-200 mt-2"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
           {/* Footer */}
           <p className={`text-center text-sm mt-6 ${darkmode ? "text-gray-400" : "text-gray-600"}`}>
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 font-medium transition">
-              Sign up
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 font-medium transition">
+              Sign in
             </Link>
           </p>
         </div>
@@ -128,4 +149,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

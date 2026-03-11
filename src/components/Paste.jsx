@@ -3,15 +3,20 @@ import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { removeFromPastes } from "../redux/pasteSlice";
-import { FormatDate } from "../utlis/formatDate";
+import { removeFromPastes, fetchAllPastes } from "../redux/pasteSlice";
+import { FormatDate } from "../utils/formatDate";
 
 const Paste = () => {
   const pastes = useSelector((state) => state.paste.pastes);
+  const loading = useSelector((state) => state.paste.loading);
   const darkmode = useSelector((state) => state.theme.darkmode);
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  useEffect(() => {
+    dispatch(fetchAllPastes());
+  }, [dispatch]);
 
   const handleDelete = (id) => {
     dispatch(removeFromPastes(id));
@@ -21,7 +26,7 @@ const Paste = () => {
   useEffect(() => {
     const delayTimer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 300); // 300ms debounce delay
+    }, 300);
 
     return () => clearTimeout(delayTimer);
   }, [searchTerm]);
@@ -65,7 +70,6 @@ const Paste = () => {
             darkmode ? "border-gray-700 bg-gray-800" : "border-gray-200 bg-white"
           }`}
         >
-          {/* Header */}
           <h2
             className={`px-4 sm:px-6 py-4 text-2xl sm:text-3xl md:text-4xl font-bold border-b transition-colors duration-200 ${
               darkmode ? "border-gray-700 bg-gray-700" : "border-gray-200 bg-gray-50"
@@ -74,9 +78,15 @@ const Paste = () => {
             All Pastes
           </h2>
 
-          {/* Pastes List */}
-          <div className="w-full px-4 sm:px-6 py-4 sm:py-6 flex flex-col gap-y-4 sm:gap-y-6" role="list" aria-live="polite" aria-atomic="true">
-            {filteredPastes.length > 0 ? (
+          <div
+            className="w-full px-4 sm:px-6 py-4 sm:py-6 flex flex-col gap-y-4 sm:gap-y-6"
+            role="list"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {loading ? (
+              <div className="text-2xl text-center w-full text-gray-400">Loading...</div>
+            ) : filteredPastes.length > 0 ? (
               filteredPastes.map((paste) => (
                 <div
                   key={paste?._id}
@@ -87,7 +97,6 @@ const Paste = () => {
                       : "border-gray-200 hover:border-gray-300 bg-gray-50"
                   }`}
                 >
-                  {/* Content Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     {/* Left: Title & Content Preview */}
                     <div className="flex flex-col gap-3">
@@ -110,76 +119,76 @@ const Paste = () => {
 
                     {/* Right: Action Buttons */}
                     <div className="flex flex-col gap-3 md:items-end md:justify-between">
-                      {/* Button Row */}
                       <div className="flex flex-wrap gap-2 sm:gap-3">
-                        {/* Edit Button */}
-                        <a
-                          href={`/?pasteId=${paste?._id}`}
-                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
+
+                        {/* Edit */}
+                        <NavLink
+                          to={`/?pasteId=${paste?._id}`}
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
                           title="Edit paste"
                           aria-label="Edit paste"
                         >
                           <PencilLine
-                            className="text-black dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors duration-200"
+                            className="text-black dark:text-white group-hover:text-blue-500 transition-colors duration-200"
                             size={18}
                           />
-                        </a>
+                        </NavLink>
 
-                        {/* Delete Button */}
+                        {/* Delete */}
                         <button
                           onClick={() => handleDelete(paste?._id)}
-                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
                           title="Delete paste"
                           aria-label="Delete paste"
                         >
                           <Trash2
-                            className="text-black dark:text-white group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors duration-200"
+                            className="text-black dark:text-white group-hover:text-red-500 transition-colors duration-200"
                             size={18}
                           />
                         </button>
 
-                        {/* View Button */}
-                        <a
-                          href={`/pastes/${paste?._id}`}
-                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
+                        {/* View */}
+                        <NavLink
+                          to={`/pastes/${paste?._id}`}
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
                           title="View paste"
                           aria-label="View paste"
                         >
                           <Eye
-                            className="text-black dark:text-white group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors duration-200"
+                            className="text-black dark:text-white group-hover:text-orange-500 transition-colors duration-200"
                             size={18}
                           />
-                        </a>
+                        </NavLink>
 
-                        {/* Copy Button */}
+                        {/* Copy */}
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(paste?.content);
                             toast.success("Copied to Clipboard");
                           }}
-                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
                           title="Copy to clipboard"
                           aria-label="Copy to clipboard"
                         >
                           <Copy
-                            className="text-black dark:text-white group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors duration-200"
+                            className="text-black dark:text-white group-hover:text-green-500 transition-colors duration-200"
                             size={18}
                           />
                         </button>
 
-                        {/* Share Button */}
+                        {/* Share (WhatsApp) */}
                         <a
                           href={`https://wa.me/?text=${encodeURIComponent(
                             `Check out this paste: ${paste?.title}\n\n${paste?.content}`
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 dark:focus:ring-offset-gray-800 group"
+                          className="p-2 rounded-[0.2rem] bg-white border border-gray-300 hover:bg-transparent transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 group"
                           title="Share on WhatsApp"
                           aria-label="Share on WhatsApp"
                         >
                           <Share2
-                            className="text-black dark:text-white group-hover:text-purple-500 dark:group-hover:text-purple-400 transition-colors duration-200"
+                            className="text-black dark:text-white group-hover:text-purple-500 transition-colors duration-200"
                             size={18}
                           />
                         </a>
@@ -224,12 +233,15 @@ const Paste = () => {
                 {debouncedSearchTerm ? (
                   <button
                     onClick={() => setSearchTerm("")}
-                    className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-offset-gray-900"
+                    className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200"
                   >
                     Clear Search
                   </button>
                 ) : (
-                  <NavLink to="/" className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-offset-gray-900 inline-block">
+                  <NavLink
+                    to="/"
+                    className="px-5 py-2.5 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm transition-all duration-200 inline-block"
+                  >
                     + Create a Note
                   </NavLink>
                 )}

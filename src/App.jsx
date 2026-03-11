@@ -3,56 +3,44 @@ import Home from "./components/Home"
 import Paste from "./components/Paste"
 import ViewPaste from "./components/ViewPaste"
 import Navbar from "./components/Navbar"
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Footer from "./components/Footer";
+import Login from "./pages/Login"
+import Signup from "./pages/Signup"
+import Footer from "./components/Footer"
+import ProtectedRoute from "./components/ProtectedRoute"
+import { useSelector } from "react-redux"
 
-
-import { useSelector } from "react-redux";
-
-const router = createBrowserRouter(
-  [
-    // {
-    //   path:"/",
-    //   element:
-    //   <div className="w-full h-full flex flex-col">
-    //     <Navbar/>
-    //     <Home/>
-    //   </div>
-    // },
-    {
-      path: "/",
-      element: (
-        <ThemeWrapper>
-          <Home />
-        </ThemeWrapper>
-      ),
-    },
-      {
-    path: "/pastes",
+const router = createBrowserRouter([
+  {
+    path: "/",
     element: (
-      <ThemeWrapper> 
-          <Paste />
+      <ThemeWrapper>
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
       </ThemeWrapper>
     ),
   },
-    // {
-    //   path:"/pastes",
-    //   element: <div className="w-full h-full flex flex-col">
-    //   <Navbar/>
-    //   <Paste/>
-    // </div>
-    // },
-   {
+  {
+    path: "/pastes",
+    element: (
+      <ThemeWrapper>
+        <ProtectedRoute>
+          <Paste />
+        </ProtectedRoute>
+      </ThemeWrapper>
+    ),
+  },
+  {
     path: "/pastes/:id",
     element: (
       <ThemeWrapper>
+        <ProtectedRoute>
           <ViewPaste />
+        </ProtectedRoute>
       </ThemeWrapper>
     ),
   },
-
-     {
+  {
     path: "/login",
     element: (
       <ThemeWrapper>
@@ -61,46 +49,33 @@ const router = createBrowserRouter(
     ),
   },
   {
-    path: "/register",
+    path: "/signup",   // ✅ Fix #3: was "/register", now matches Signup.jsx's Link to="/signup"
     element: (
       <ThemeWrapper>
-        <Register />
+        <Signup />
       </ThemeWrapper>
     ),
   },
-
-  ]
-)
+])
 
 function ThemeWrapper({ children }) {
-  const darkmode = useSelector((state) => state.theme.darkmode);
+  const darkmode = useSelector((state) => state.theme.darkmode)
 
   return (
     <div
       className={`min-h-screen flex flex-col ${
-        darkmode
-          ? "dark bg-gray-900 text-white"
-          : "bg-white text-black"
+        darkmode ? "dark bg-gray-900 text-white" : "bg-white text-black"
       }`}
     >
-      {/* Top */}
       <Navbar />
-
-      {/* Middle content */}
-      <main className="grow">
-        {children}
-      </main>
-
-      {/* Bottom */}
+      <main className="grow">{children}</main>
       <Footer />
     </div>
-  );
+  )
 }
 
 function App() {
-  return (
-    <RouterProvider router={router} />
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App
