@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar"
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Footer from "./components/Footer";
-
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 import { useSelector } from "react-redux";
 
@@ -65,6 +65,14 @@ const router = createBrowserRouter(
     element: (
       <ThemeWrapper>
         <Register />
+      </ThemeWrapper>
+    ),
+  },
+  {
+    path: "/terms",
+    element: (
+      <ThemeWrapper>
+        <TermsAndConditions />
       </ThemeWrapper>
     ),
   },

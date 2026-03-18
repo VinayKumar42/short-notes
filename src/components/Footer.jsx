@@ -51,7 +51,7 @@ const isDark = darkmode;
                             </li>
                             <li>
                                 <Link to="/terms" className="hover:underline">
-                                    Terms of Service
+                                    Terms & Conditions
                                 </Link>
                             </li>
                         </ul>
