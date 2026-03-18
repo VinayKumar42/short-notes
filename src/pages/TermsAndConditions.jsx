@@ -54,7 +54,7 @@ const TermsAndConditions = () => {
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4">Terms & Conditions</h1>
           <p className={`text-sm ${darkmode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            Last Updated: January 1, 2025
           </p>
         </div>
 
