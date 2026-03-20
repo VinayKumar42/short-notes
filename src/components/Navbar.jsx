@@ -15,53 +15,22 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full bg-gray-800 dark:bg-gray-900 transition-colors duration-200 sticky top-0 z-50">
-      <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4">
-        {/* Logo/Brand */}
-        <div className="flex items-center">
-          <span className="text-white font-bold text-lg sm:text-xl">Notes</span>
-        </div>
-
-        {/* Desktop Navigation */}
-        <div className="hidden sm:flex gap-x-6 md:gap-x-8" role="navigation" aria-label="Main navigation">
-          {NavbarData.map((link, idx) => (
-            <NavLink
-              key={idx}
-              to={link.path}
-              className={({ isActive }) =>
-                `font-medium text-base md:text-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded px-2 py-1 ${
-                  isActive
-                    ? "text-blue-500 dark:text-blue-400 font-semibold"
-                    : "text-white dark:text-gray-300 hover:text-blue-400 dark:hover:text-blue-300"
-                }`
-              }
-            >
-              {link.title}
-            </NavLink>
-          ))}
-        </div>
-
-        {/* Right: Toggle Theme & Mobile Menu */}
-        <div className="flex items-center gap-x-3">
-          <button
-            onClick={() => dispatch(toggleDarkMode())}
-            className="p-2 rounded-lg bg-gray-700 dark:bg-gray-800 hover:bg-gray-600 dark:hover:bg-gray-700 text-yellow-400 dark:text-yellow-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-            aria-label="Toggle dark mode"
-          >
-            {darkmode ? (
-              <Sun size={20} />
-            ) : (
-              <Moon size={20} />
-            )}
-          </button>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="sm:hidden p-2 rounded-lg bg-gray-700 dark:bg-gray-800 hover:bg-gray-600 dark:hover:bg-gray-700 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-            aria-label="Toggle mobile menu"
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-nav"
+    <div className="w-full h-11.25 flex justify-between items-center p-4 bg-gray-800">
+      {/* Left: Navigation Links */}
+      <div className="flex gap-x-5">
+        {NavbarData.map((link, idx) => (
+          <NavLink
+            key={idx}
+            to={link.path}
+            className={({ isActive }) =>
+              `font-semibold text-xl transition-colors duration-200 ${
+                isActive
+                  ? "text-blue-500"
+                  : darkMode
+                  ? "text-gray-300 hover:text-white"
+                  : "text-gray-700 hover:text-gray-900"
+              }`
+            }
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
